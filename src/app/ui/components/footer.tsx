@@ -21,7 +21,9 @@ export default function FooterSection() {
 					{/* Brand Section */}
 					<div className="space-y-3">
 						<div className="flex items-center gap-2">
-							<span className="font-bold text-2xl">MergeMe</span>
+							<Link color="foreground" className="font-bold text-2xl" href="/">
+								MergeMe
+							</Link>
 						</div>
 						<p className="text-default-500 text-sm">
 							Submit your <span className="line-through">love</span> pull
@@ -37,7 +39,7 @@ export default function FooterSection() {
 
 				<div className="flex flex-col items-center justify-between gap-4 md:flex-row">
 					<p className="text-default-400 text-sm">
-						© {new Date().getFullYear()} LGTM. All rights reserved.
+						© {new Date().getFullYear()} MergeMe. All rights reserved.
 					</p>
 
 					{/* Social Links */}

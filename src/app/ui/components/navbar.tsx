@@ -9,7 +9,9 @@ export function NavBar() {
 	return (
 		<Navbar className="dark:bg-background">
 			<NavbarBrand>
-				<p className="font-bold text-inherit">MergeMe</p>
+				<Link color="foreground" href="/" className="font-bold text-lg">
+					MergeMe
+				</Link>
 			</NavbarBrand>
 			<NavbarContent className="hidden gap-4 sm:flex" justify="center">
 				<NavbarItem>
