@@ -7,6 +7,10 @@ import { prisma } from "@/lib/prisma";
 import { type RegisterDataSchema, registerDataSchema } from "@/lib/schemas";
 import type { ActionResult } from "@/lib/types";
 
+export async function getUserByEmail(email: string) {
+	await prisma.user.findUnique({ where: { email } });
+}
+
 export async function registerUser(
 	data: RegisterDataSchema,
 ): Promise<ActionResult<User>> {
