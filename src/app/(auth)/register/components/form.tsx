@@ -3,15 +3,32 @@
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Input } from "@heroui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@primer/react-brand";
 import { useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import EyeFilledIcon from "@/app/ui/base/eye-filled-icon";
 import EyeSlashFilledIcon from "@/app/ui/base/eye-slash-filled-icon";
+import { type RegisterDataSchema, registerDataSchema } from "@/lib/schemas";
 
 export default function RegisterForm() {
 	const [isVisible, setIsVisible] = useState(false);
 	const toggleVisibility = () => setIsVisible(!isVisible);
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<RegisterDataSchema>({
+		resolver: zodResolver(registerDataSchema),
+		mode: "onTouched",
+	});
+
+	// TODO: implement server action first
+	const onSubmit: SubmitHandler<RegisterDataSchema> = (
+		data: RegisterDataSchema
+	) => console.log(data);
 
 	return (
 		<Card className="-mt-20 mx-auto w-3/5 md:w-1/3">
@@ -25,7 +42,7 @@ export default function RegisterForm() {
 			<Divider />
 
 			<CardBody className="px-5 py-5">
-				<form className="flex flex-col gap-8">
+				<form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex flex-col gap-5">
 						<div className="grid grid-cols-2 gap-3">
 							<Input
@@ -34,6 +51,9 @@ export default function RegisterForm() {
 								placeholder=""
 								type="text"
 								variant="bordered"
+								isInvalid={!!errors.firstName}
+								errorMessage={errors.firstName?.message}
+								{...register("firstName")}
 							/>
 							<Input
 								isRequired
@@ -41,16 +61,30 @@ export default function RegisterForm() {
 								placeholder=""
 								type="text"
 								variant="bordered"
+								isInvalid={!!errors.lastName}
+								errorMessage={errors.lastName?.message}
+								{...register("lastName")}
 							/>
 						</div>
 
-						<Input isRequired label="Email" type="email" variant="bordered" />
+						<Input
+							isRequired
+							label="Email"
+							type="email"
+							variant="bordered"
+							isInvalid={!!errors.email}
+							errorMessage={errors.email?.message}
+							{...register("email")}
+						/>
 
 						<Input
 							isRequired
 							variant="bordered"
 							label="Password"
 							type={isVisible ? "text" : "password"}
+							isInvalid={!!errors.password}
+							errorMessage={errors.password?.message}
+							{...register("password")}
 							endContent={
 								<button
 									aria-label="toggle password visibility"
