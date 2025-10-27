@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@primer/react-brand':
+        specifier: ^0.59.1
+        version: 0.59.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       next:
         specifier: 15.5.6
         version: 15.5.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -17,6 +20,9 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      react-icons:
+        specifier: ^5.5.0
+        version: 5.5.0(react@19.1.0)
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.0
@@ -295,6 +301,26 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@oddbird/popover-polyfill@0.5.2':
+    resolution: {integrity: sha512-iFrvar5SOMtKFOSjYvs4z9UlLqDdJbMx0mgISLcPedv+g0ac5sgeETLGtipHCVIae6HJPclNEH5aCyD1RZaEHw==}
+
+  '@primer/behaviors@1.8.3':
+    resolution: {integrity: sha512-Cot5Jg5McTT4zg41omctzY60DygZ6qlhrBtD4rpDBM6vNi6CrCAs/2QSPAgYTW7Kz+jFp4BXJFhNcVqfqTgaxA==}
+
+  '@primer/react-brand@0.59.1':
+    resolution: {integrity: sha512-HNXQ9E4zOw3cpSPRpYRpbR22O7FVmk7qabN1idhMR4hsyOYlDs1ALv4gvlvg3C1DO5iMYzpYEzE2Z1msO1jXsQ==}
+    engines: {node: '>=22.0.0', npm: '>=8.0.0'}
+    peerDependencies:
+      '@types/react': '>=18 <20'
+      '@types/react-dom': '>=18 <20'
+      react: '>=18 <20'
+      react-dom: '>=18 <20'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
 
@@ -536,6 +562,11 @@ packages:
     peerDependencies:
       react: ^19.1.0
 
+  react-icons@5.5.0:
+    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
+    peerDependencies:
+      react: '*'
+
   react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
     engines: {node: '>=0.10.0'}
@@ -765,6 +796,20 @@ snapshots:
   '@next/swc-win32-x64-msvc@15.5.6':
     optional: true
 
+  '@oddbird/popover-polyfill@0.5.2': {}
+
+  '@primer/behaviors@1.8.3': {}
+
+  '@primer/react-brand@0.59.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@oddbird/popover-polyfill': 0.5.2
+      '@primer/behaviors': 1.8.3
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.2
+      '@types/react-dom': 19.2.2(@types/react@19.2.2)
+
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
@@ -963,6 +1008,10 @@ snapshots:
     dependencies:
       react: 19.1.0
       scheduler: 0.26.0
+
+  react-icons@5.5.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
 
   react@19.1.0: {}
 

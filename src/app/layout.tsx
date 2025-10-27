@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { geistMono, monaSans } from "@/fonts";
 import "./globals.css";
+import { Providers } from "./ui/providers";
 
 export const metadata: Metadata = {
 	title: "MergeMe",
@@ -17,7 +18,7 @@ export default function RootLayout({
 			<body
 				className={`${monaSans.variable} ${geistMono.variable} antialiased`}
 			>
-				{children}
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
