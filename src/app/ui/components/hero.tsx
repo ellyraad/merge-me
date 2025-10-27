@@ -5,12 +5,8 @@ import { HiHeart } from "react-icons/hi";
 export default function HeroSection() {
 	return (
 		<div
-			style={{
-				backgroundImage: "url('/hero-bg.png')",
-				backgroundSize: "cover",
-				backgroundPosition: "center",
-				backgroundRepeat: "no-repeat",
-			}}
+			className="min-h-dvh bg-center bg-cover bg-no-repeat"
+			style={{ backgroundImage: "url('/hero-bg.png')" }}
 		>
 			<Hero align="center">
 				<Hero.Heading>
