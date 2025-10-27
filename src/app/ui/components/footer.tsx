@@ -21,7 +21,9 @@ export default function FooterSection() {
 					{/* Brand Section */}
 					<div className="space-y-3">
 						<div className="flex items-center gap-2">
-							<span className="font-bold text-2xl">MergeMe</span>
+							<Link color="foreground" className="font-bold text-2xl" href="/">
+								MergeMe
+							</Link>
 						</div>
 						<p className="text-default-500 text-sm">
 							Submit your <span className="line-through">love</span> pull
