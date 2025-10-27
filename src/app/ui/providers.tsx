@@ -2,11 +2,41 @@
 
 import { HeroUIProvider } from "@heroui/react";
 import { ThemeProvider } from "@primer/react-brand";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { useEffect, useState } from "react";
+import { ColorModeContext } from "../contexts/colormode";
 
 export function Providers({ children }: { children: React.ReactNode }) {
+	const [colorMode, setColorMode] = useState<"light" | "dark">("dark");
+
+	useEffect(() => {
+		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+			setColorMode("dark");
+		}
+	}, []);
+
 	return (
-		<ThemeProvider>
-			<HeroUIProvider>{children}</HeroUIProvider>
-		</ThemeProvider>
+		<ColorModeContext.Provider value={{ colorMode, setColorMode }}>
+			<NextThemesProvider
+				attribute="class"
+				defaultTheme={colorMode}
+				value={{
+					light: "light",
+					dark: "dark",
+				}}
+			>
+				<HeroUIProvider>
+					<ThemeProvider
+						colorMode={colorMode}
+						style={{
+							backgroundColor: "var(--brand-color-canvas-default)",
+							transition: "background-color 0.3s ease",
+						}}
+					>
+						{children}
+					</ThemeProvider>
+				</HeroUIProvider>
+			</NextThemesProvider>
+		</ColorModeContext.Provider>
 	);
 }
