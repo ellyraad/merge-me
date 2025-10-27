@@ -1,27 +1,37 @@
 "use client";
 
+import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Input } from "@heroui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@primer/react-brand";
+import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaLock } from "react-icons/fa6";
+import { signInUser } from "@/app/actions/auth-actions";
 import { type LoginDataSchema, loginDataSchema } from "@/lib/schemas";
+import { handleFormSubmitResult } from "@/lib/utils";
 
 export default function LoginForm() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm({
 		resolver: zodResolver(loginDataSchema),
 		mode: "onTouched",
 	});
 
-	// TODO: implement server action for login first
-	const onSubmit: SubmitHandler<LoginDataSchema> = (data: LoginDataSchema) =>
-		console.log(data);
+	const router = useRouter();
+	const onSubmit: SubmitHandler<LoginDataSchema> = async (
+		data: LoginDataSchema
+	) => {
+		const userData = await signInUser(data);
+		const result = handleFormSubmitResult(userData, "Signed in successfully");
+		if (result) {
+			router.push("/onboarding");
+		}
+	};
 
 	return (
 		<Card className="-mt-20 mx-auto w-3/5 md:w-1/3">
@@ -51,13 +61,13 @@ export default function LoginForm() {
 							variant="bordered"
 							label="Password"
 							type="password"
-							isInvalid={!!errors.email}
-							errorMessage={!!errors.email?.message}
+							isInvalid={!!errors.password}
+							errorMessage={!!errors.password?.message}
 							{...register("password")}
 						/>
 					</div>
 
-					<Button type="submit" variant="primary">
+					<Button type="submit" color="success" isLoading={isSubmitting}>
 						Login
 					</Button>
 				</form>

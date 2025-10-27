@@ -4,13 +4,13 @@ import type { ActionResult } from "./types";
 export function handleFormSubmitResult<T>(
 	result: ActionResult<T>,
 	successMessage: string,
-) {
+): string | undefined {
 	if (result.status === "success") {
 		addToast({
 			title: successMessage,
 			color: "success",
 		});
-		return;
+		return "success";
 	}
 
 	if (typeof result.error === "string") {
