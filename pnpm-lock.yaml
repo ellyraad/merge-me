@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@primer/react-brand':
+        specifier: ^0.59.1
+        version: 0.59.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       next:
         specifier: 15.5.6
         version: 15.5.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -294,6 +297,26 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@oddbird/popover-polyfill@0.5.2':
+    resolution: {integrity: sha512-iFrvar5SOMtKFOSjYvs4z9UlLqDdJbMx0mgISLcPedv+g0ac5sgeETLGtipHCVIae6HJPclNEH5aCyD1RZaEHw==}
+
+  '@primer/behaviors@1.8.3':
+    resolution: {integrity: sha512-Cot5Jg5McTT4zg41omctzY60DygZ6qlhrBtD4rpDBM6vNi6CrCAs/2QSPAgYTW7Kz+jFp4BXJFhNcVqfqTgaxA==}
+
+  '@primer/react-brand@0.59.1':
+    resolution: {integrity: sha512-HNXQ9E4zOw3cpSPRpYRpbR22O7FVmk7qabN1idhMR4hsyOYlDs1ALv4gvlvg3C1DO5iMYzpYEzE2Z1msO1jXsQ==}
+    engines: {node: '>=22.0.0', npm: '>=8.0.0'}
+    peerDependencies:
+      '@types/react': '>=18 <20'
+      '@types/react-dom': '>=18 <20'
+      react: '>=18 <20'
+      react-dom: '>=18 <20'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -764,6 +787,20 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@15.5.6':
     optional: true
+
+  '@oddbird/popover-polyfill@0.5.2': {}
+
+  '@primer/behaviors@1.8.3': {}
+
+  '@primer/react-brand@0.59.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@oddbird/popover-polyfill': 0.5.2
+      '@primer/behaviors': 1.8.3
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.2
+      '@types/react-dom': 19.2.2(@types/react@19.2.2)
 
   '@swc/helpers@0.5.15':
     dependencies:
