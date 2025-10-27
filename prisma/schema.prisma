@@ -15,14 +15,15 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  firstName    String
-  lastName     String
-  email        String?  @unique
-  passwordHash String
-  image        String?
-  bio          String
-  createdAt    DateTime @default(now())
+  id             String   @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String?  @unique
+  passwordHash   String
+  image          String?
+  bio            String
+  createdAt      DateTime @default(now())
+  doneOnboarding Boolean  @default(false)
 
   programmingLanguages UserProgrammingLanguage[]
   jobTitles            UserJobTitle[]
