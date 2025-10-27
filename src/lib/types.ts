@@ -2,10 +2,10 @@ import type { z } from "zod";
 
 export type ActionResult<T> =
 	| {
-			status: "error" | "success";
+			status: "error";
 			error: string | z.core.$ZodErrorTree<T>;
 	  }
 	| {
-			status: "error" | "success";
+			status: "success";
 			data: T;
 	  };
