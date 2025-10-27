@@ -1,14 +1,50 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { AuthError } from "next-auth";
 import { z } from "zod";
+import { signIn } from "@/auth";
 import type { User } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import { type RegisterDataSchema, registerDataSchema } from "@/lib/schemas";
+import {
+	type LoginDataSchema,
+	type RegisterDataSchema,
+	registerDataSchema,
+} from "@/lib/schemas";
 import type { ActionResult } from "@/lib/types";
 
 export async function getUserByEmail(email: string) {
 	await prisma.user.findUnique({ where: { email } });
+}
+
+export async function signInUser(
+	data: LoginDataSchema,
+): Promise<ActionResult<string>> {
+	try {
+		await signIn("credentials", {
+			email: data.email,
+			password: data.password,
+			redirect: false,
+		});
+
+		return { status: "success", data: "Successfully logged in" };
+	} catch (error) {
+		const fallbackError = {
+			status: "error",
+			error: "Something else went wrong. Try again.",
+		} as ActionResult<string>;
+
+		if (error instanceof AuthError) {
+			switch (error.type) {
+				case "CredentialsSignin":
+					return { status: "error", error: "Invalid credentials" };
+				default:
+					return fallbackError;
+			}
+		}
+
+		return fallbackError;
+	}
 }
 
 export async function registerUser(
