@@ -1,0 +1,54 @@
+"use server";
+
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+import type { User } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
+import { type RegisterDataSchema, registerDataSchema } from "@/lib/schemas";
+import type { ActionResult } from "@/lib/types";
+
+export async function registerUser(
+	data: RegisterDataSchema,
+): Promise<ActionResult<User>> {
+	try {
+		const validated = registerDataSchema.safeParse(data);
+		if (!validated.success) {
+			return { status: "error", error: z.treeifyError(validated.error) };
+		}
+
+		const { firstName, lastName, email, password } = validated.data;
+		const hashPassword = await bcrypt.hash(password, 10);
+
+		const isExistingUser = await prisma.user.findUnique({ where: { email } });
+		if (isExistingUser) {
+			return { status: "error", error: "Account is already in use" };
+		}
+
+		const newUser = await prisma.user.create({
+			data: {
+				firstName,
+				lastName,
+				email,
+				passwordHash: hashPassword,
+
+				// the following data will be altered during onboarding
+				bio: "",
+				programmingLanguages: {
+					create: [],
+				},
+				jobTitles: {
+					create: [],
+				},
+			},
+		});
+
+		return { status: "success", data: newUser };
+	} catch (error) {
+		console.error(error);
+
+		return {
+			status: "error",
+			error: "Something went wrong. Please try again later.",
+		};
+	}
+}
