@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
-import { email, z } from "zod";
+import { z } from "zod";
 import { signIn } from "@/auth";
 import type { User } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
