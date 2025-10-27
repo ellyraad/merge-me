@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
-import { z } from "zod";
+import { email, z } from "zod";
 import { signIn } from "@/auth";
 import type { User } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -14,12 +14,14 @@ import {
 import type { ActionResult } from "@/lib/types";
 
 export async function getUserByEmail(email: string) {
-	await prisma.user.findUnique({ where: { email } });
+	return await prisma.user.findUnique({ where: { email } });
 }
 
 export async function signInUser(
 	data: LoginDataSchema,
-): Promise<ActionResult<string>> {
+): Promise<
+	ActionResult<string | { message: string; doneOnboarding?: boolean }>
+> {
 	try {
 		await signIn("credentials", {
 			email: data.email,
@@ -27,7 +29,14 @@ export async function signInUser(
 			redirect: false,
 		});
 
-		return { status: "success", data: "Successfully logged in" };
+		const userInfo = await getUserByEmail(data.email);
+		return {
+			status: "success",
+			data: {
+				message: "Successfully logged in",
+				doneOnboarding: userInfo?.doneOnboarding,
+			},
+		};
 	} catch (error) {
 		const fallbackError = {
 			status: "error",

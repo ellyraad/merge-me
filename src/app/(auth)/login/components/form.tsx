@@ -26,10 +26,17 @@ export default function LoginForm() {
 	const onSubmit: SubmitHandler<LoginDataSchema> = async (
 		data: LoginDataSchema
 	) => {
-		const userData = await signInUser(data);
-		const result = handleFormSubmitResult(userData, "Signed in successfully");
-		if (result) {
-			router.push("/onboarding");
+		const authResult = await signInUser(data);
+		handleFormSubmitResult(authResult, "Signed in successfully");
+		if (authResult.status === "success") {
+			if (
+				typeof authResult.data === "object" &&
+				authResult.data.doneOnboarding
+			) {
+				router.push("/feed");
+			} else {
+				router.push("/onboarding");
+			}
 		}
 	};
 
