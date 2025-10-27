@@ -1,5 +1,6 @@
 "use client";
-import { Hero, Text } from "@primer/react-brand";
+
+import { Hero } from "@primer/react-brand";
 import { HiHeart } from "react-icons/hi";
 
 export default function HeroSection() {
@@ -10,9 +11,9 @@ export default function HeroSection() {
 		>
 			<Hero align="center">
 				<Hero.Heading>
-					<Text size="1000" className="flex items-center gap-4">
+					<span className="mt-20 flex items-center gap-4 text-6xl md:text-9xl">
 						LGTM <HiHeart className="mb-2 md:mb-6" />
-					</Text>
+					</span>
 				</Hero.Heading>
 
 				<Hero.Description>
