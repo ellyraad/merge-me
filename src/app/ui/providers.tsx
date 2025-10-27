@@ -1,6 +1,7 @@
 "use client";
 
 import { HeroUIProvider } from "@heroui/react";
+import { ToastProvider } from "@heroui/toast";
 import { ThemeProvider } from "@primer/react-brand";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useEffect, useState } from "react";
@@ -33,6 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 							transition: "background-color 0.3s ease",
 						}}
 					>
+						<ToastProvider placement="top-center" />
 						{children}
 					</ThemeProvider>
 				</HeroUIProvider>

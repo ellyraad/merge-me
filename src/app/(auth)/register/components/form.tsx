@@ -1,16 +1,19 @@
 "use client";
 
+import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Input } from "@heroui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@primer/react-brand";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
+import { registerUser } from "@/app/actions/auth-actions";
 import EyeFilledIcon from "@/app/ui/base/eye-filled-icon";
 import EyeSlashFilledIcon from "@/app/ui/base/eye-slash-filled-icon";
 import { type RegisterDataSchema, registerDataSchema } from "@/lib/schemas";
+import { handleFormSubmitResult } from "@/lib/utils";
 
 export default function RegisterForm() {
 	const [isVisible, setIsVisible] = useState(false);
@@ -19,16 +22,26 @@ export default function RegisterForm() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<RegisterDataSchema>({
 		resolver: zodResolver(registerDataSchema),
 		mode: "onTouched",
 	});
 
-	// TODO: implement server action first
-	const onSubmit: SubmitHandler<RegisterDataSchema> = (
+	const router = useRouter();
+	const onSubmit: SubmitHandler<RegisterDataSchema> = async (
 		data: RegisterDataSchema
-	) => console.log(data);
+	) => {
+		const fetchResult = await registerUser(data);
+		const result = handleFormSubmitResult(
+			fetchResult,
+			"Account successfully created"
+		);
+
+		if (result) {
+			router.push("/login");
+		}
+	};
 
 	return (
 		<Card className="-mt-20 mx-auto w-3/5 md:w-1/3">
@@ -102,7 +115,12 @@ export default function RegisterForm() {
 						/>
 					</div>
 
-					<Button type="submit" variant="accent">
+					<Button
+						type="submit"
+						size="md"
+						color="success"
+						isLoading={isSubmitting}
+					>
 						Sign Up
 					</Button>
 				</form>
