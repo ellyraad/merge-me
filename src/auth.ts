@@ -22,7 +22,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				const { email, password } = validated.data;
 				const user = await prisma.user.findUnique({ where: { email } });
 
-				if (!(user && compare(password, user.passwordHash))) {
+				if (!(user && (await compare(password, user.passwordHash)))) {
 					return null; // FIXME: proper error handling
 				}
 
