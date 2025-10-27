@@ -10,7 +10,9 @@
 		"format": "biome format --write"
 	},
 	"dependencies": {
+		"@heroui/react": "^2.8.5",
 		"@primer/react-brand": "^0.59.1",
+		"framer-motion": "^12.23.24",
 		"next": "15.5.6",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
