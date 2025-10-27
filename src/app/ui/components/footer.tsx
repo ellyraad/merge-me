@@ -37,7 +37,7 @@ export default function FooterSection() {
 
 				<div className="flex flex-col items-center justify-between gap-4 md:flex-row">
 					<p className="text-default-400 text-sm">
-						© {new Date().getFullYear()} LGTM. All rights reserved.
+						© {new Date().getFullYear()} MergeMe. All rights reserved.
 					</p>
 
 					{/* Social Links */}
