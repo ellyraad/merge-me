@@ -20,6 +20,13 @@ export default {
 
 			return isLoggedIn || Response.redirect(new URL("/login", nextUrl));
 		},
+
+		async session({ session, token }) {
+			if (token.sub && session.user) {
+				session.user.id = token.sub;
+			}
+			return session;
+		},
 	},
 	providers: [],
 } satisfies NextAuthConfig;
