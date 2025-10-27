@@ -5,6 +5,7 @@ import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Input } from "@heroui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
@@ -27,11 +28,19 @@ export default function RegisterForm() {
 		mode: "onTouched",
 	});
 
+	const router = useRouter();
 	const onSubmit: SubmitHandler<RegisterDataSchema> = async (
 		data: RegisterDataSchema
 	) => {
-		const result = await registerUser(data);
-		handleFormSubmitResult(result, "Account successfully created");
+		const fetchResult = await registerUser(data);
+		const result = handleFormSubmitResult(
+			fetchResult,
+			"Account successfully created"
+		);
+
+		if (result) {
+			router.push("/login");
+		}
 	};
 
 	return (
