@@ -3820,6 +3820,20 @@ snapshots:
       '@react-types/shared': 3.32.1(react@19.1.0)
       react: 19.1.0
 
+  '@oddbird/popover-polyfill@0.5.2': {}
+
+  '@primer/behaviors@1.8.3': {}
+
+  '@primer/react-brand@0.59.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@oddbird/popover-polyfill': 0.5.2
+      '@primer/behaviors': 1.8.3
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.2
+      '@types/react-dom': 19.2.2(@types/react@19.2.2)
+
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
