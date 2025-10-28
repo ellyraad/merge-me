@@ -6,15 +6,11 @@ import { Input, Textarea } from "@heroui/input";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Grid } from "@primer/react-brand";
+import type { Image, JobTitle, ProgrammingLanguage } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { type Key, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { submitOnboarding } from "@/app/actions/onboarding-actions";
-import type {
-	Image,
-	JobTitle,
-	ProgrammingLanguage,
-} from "@/generated/prisma/client";
 import { type OnboardingSchema, onboardingSchema } from "@/lib/schemas";
 import { FieldGroupWrapper } from "./field-group-wrapper";
 import { FormCardWrapper } from "./form-card-wrapper";

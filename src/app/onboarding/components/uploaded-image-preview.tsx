@@ -2,12 +2,12 @@
 
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
+import type { Image } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { CldImage } from "next-cloudinary";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { deleteUserImage } from "@/app/actions/image-actions";
-import type { Image } from "@/generated/prisma/client";
 import type { OnboardingSchema } from "@/lib/schemas";
 
 export function UploadedImagePreview({

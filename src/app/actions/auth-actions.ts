@@ -1,10 +1,10 @@
 "use server";
 
+import type { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 import { auth, signIn } from "@/auth";
-import type { User } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
 	type LoginDataSchema,
