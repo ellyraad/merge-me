@@ -20,6 +20,8 @@ model User {
   lastName       String
   email          String?  @unique
   passwordHash   String
+  city           String?
+  country        String?
   bio            String
   createdAt      DateTime @default(now())
   doneOnboarding Boolean  @default(false)
