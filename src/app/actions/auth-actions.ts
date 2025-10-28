@@ -22,7 +22,10 @@ export async function getAuthUser() {
 	const userId = session?.user?.id;
 	if (!userId) throw new Error("Unauthorized Access");
 
-	return await prisma.user.findUnique({ where: { id: userId } });
+	return await prisma.user.findUnique({
+		where: { id: userId },
+		include: { photo: true },
+	});
 }
 
 export async function signInUser(
