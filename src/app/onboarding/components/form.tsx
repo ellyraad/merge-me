@@ -3,10 +3,13 @@
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Button as HUButton } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
+import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Grid } from "@primer/react-brand";
+import { useRouter } from "next/navigation";
 import { type Key, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { submitOnboarding } from "@/app/actions/onboarding-actions";
 import type {
 	Image,
 	JobTitle,
@@ -60,6 +63,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 
 	const watchedPhoto = watch("photo") || { publicId: "", url: "" };
 
+	const router = useRouter();
 	const onSubmit: SubmitHandler<OnboardingSchema> = async (
 		data: OnboardingSchema,
 	) => {
@@ -67,7 +71,24 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 			await trigger("photo");
 			return;
 		}
-		console.log(data);
+
+		const result = await submitOnboarding(data);
+		if (result.status === "error") {
+			addToast({
+				title: "Error completing profile",
+				description: result.error as string,
+				color: "danger",
+			});
+			return;
+		}
+
+		addToast({
+			title: "Profile completed successfully!",
+			description: "Redirecting you to the feed...",
+			color: "success",
+		});
+
+		router.push("/feed");
 	};
 
 	const getAvailableLanguages = (idx: Key | null) => {
