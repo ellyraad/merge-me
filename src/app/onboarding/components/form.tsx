@@ -1,14 +1,18 @@
 "use client";
 
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
+import { Button as HUButton } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
-import { Button, Grid } from "@primer/react-brand";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Grid } from "@primer/react-brand";
 import { type Key, useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import type {
 	Image,
 	JobTitle,
 	ProgrammingLanguage,
 } from "@/generated/prisma/client";
+import { type OnboardingSchema, onboardingSchema } from "@/lib/schemas";
 import { FieldGroupWrapper } from "./field-group-wrapper";
 import { FormCardWrapper } from "./form-card-wrapper";
 import { ImageUploadButton } from "./image-upload-btn";
@@ -21,26 +25,69 @@ type FormDetails = {
 };
 
 export function OnboardingProfileForm({ details }: { details: FormDetails }) {
-	const [choices, setChoices] = useState<(Key | null)[]>([null, null, null]);
+	const [languageChoices, setLanguageChoices] = useState<(Key | null)[]>([
+		null,
+		null,
+		null,
+	]);
 	const [isUploading, setIsUploading] = useState(false);
 
+	// form handling
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		trigger,
+		formState: { errors, isSubmitting },
+	} = useForm({
+		resolver: zodResolver(onboardingSchema),
+		mode: "onTouched",
+		defaultValues: {
+			bio: "",
+			city: "",
+			country: "",
+			jobTitle: "",
+			programmingLanguages: [],
+			photo: details.photo
+				? {
+						publicId: details.photo.publicId ?? "",
+						url: details.photo.url ?? "",
+					}
+				: { publicId: "", url: "" }, // Initialize with empty object
+		},
+	});
+
+	const watchedPhoto = watch("photo") || { publicId: "", url: "" };
+
+	const onSubmit: SubmitHandler<OnboardingSchema> = async (
+		data: OnboardingSchema,
+	) => {
+		if (!watchedPhoto) {
+			await trigger("photo");
+			return;
+		}
+		console.log(data);
+	};
+
 	const getAvailableLanguages = (idx: Key | null) => {
-		const selectedIds = choices.filter(
+		const selectedIds = languageChoices.filter(
 			(choice, i) => i !== idx && choice !== null,
 		);
 		return details.languages.filter(lang => !selectedIds.includes(lang.id));
 	};
 
-	const updateChoice = (index: number) => (key: Key | null) => {
-		setChoices(prev => {
-			const updated = [...prev];
-			updated[index] = key;
-			return updated;
-		});
+	const updateLanguageChoice = (index: number) => (key: Key | null) => {
+		const updated = [...languageChoices];
+		updated[index] = key;
+		setLanguageChoices(updated);
+
+		const validChoices = updated.filter(choice => choice !== null) as string[];
+		setValue("programmingLanguages", validChoices);
 	};
 
 	return (
-		<form className="my-10">
+		<form className="my-10" onSubmit={handleSubmit(onSubmit)}>
 			<Grid fullWidth className="wrap">
 				<Grid.Column
 					as="div"
@@ -52,13 +99,30 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 							isRequired
 							variant="bordered"
 							label="Bio"
+							isInvalid={!!errors.bio}
+							errorMessage={errors.bio?.message}
+							{...register("bio")}
 							placeholder="Time to impress your fellow nerds..."
 						/>
 
 						<FieldGroupWrapper title="Where are you from?">
 							{/* FIXME: temporary, use autocomplete */}
-							<Input isRequired variant="bordered" label="City" />
-							<Input isRequired variant="bordered" label="Country" />
+							<Input
+								isRequired
+								variant="bordered"
+								label="City"
+								isInvalid={!!errors.city}
+								errorMessage={errors.city?.message}
+								{...register("city")}
+							/>
+							<Input
+								isRequired
+								variant="bordered"
+								label="Country"
+								isInvalid={!!errors.country}
+								errorMessage={errors.country?.message}
+								{...register("country")}
+							/>
 						</FieldGroupWrapper>
 
 						<FieldGroupWrapper title="Current status/job title">
@@ -66,6 +130,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 								items={details.jobTitles}
 								variant="bordered"
 								label="Job title"
+								onSelectionChange={key => setValue("jobTitle", key as string)}
 							>
 								{item => (
 									<AutocompleteItem key={item.id} textValue={item.name}>
@@ -85,9 +150,8 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 									variant="bordered"
 									key={idx}
 									label={`Top ${idx + 1}`}
-									selectedKey={choices[idx] as string | null}
 									items={getAvailableLanguages(idx)}
-									onSelectionChange={updateChoice(idx)}
+									onSelectionChange={updateLanguageChoice(idx)}
 								>
 									{item => (
 										<AutocompleteItem key={item.id} textValue={item.name}>
@@ -106,12 +170,21 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 					span={{ xsmall: 12, medium: 6 }}
 				>
 					<FormCardWrapper title="Show your best look">
+						{!watchedPhoto && errors.photo && (
+							<p className="mb-2 text-red-500 text-sm">Photo is required</p>
+						)}
 						<ImageUploadButton
+							setValue={(value: OnboardingSchema["photo"]) =>
+								setValue("photo", value)
+							}
 							isUploading={isUploading}
 							onUploadingChange={setIsUploading}
 						/>
 						<div className="mx-auto my-5 w-fit">
 							<UploadedImagePreview
+								setValue={(value: OnboardingSchema["photo"]) =>
+									setValue("photo", value)
+								}
 								userImage={details.photo}
 								isUploading={isUploading}
 							/>
@@ -120,9 +193,15 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 				</Grid.Column>
 
 				<Grid.Column span={12} className="flex justify-end">
-					<Button variant="primary" size="large">
+					<HUButton
+						color="success"
+						size="lg"
+						type="submit"
+						disabled={isSubmitting}
+						isLoading={isSubmitting}
+					>
 						Save
-					</Button>
+					</HUButton>
 				</Grid.Column>
 			</Grid>
 		</form>

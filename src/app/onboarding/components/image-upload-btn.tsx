@@ -10,13 +10,16 @@ import {
 	type CloudinaryUploadWidgetResults,
 } from "next-cloudinary";
 import { addImage } from "@/app/actions/image-actions";
+import type { OnboardingSchema } from "@/lib/schemas";
 
 export function ImageUploadButton({
 	isUploading,
 	onUploadingChange,
+	setValue,
 }: {
 	isUploading?: boolean;
 	onUploadingChange?: (uploading: boolean) => void;
+	setValue?: (value: OnboardingSchema["photo"]) => void;
 }) {
 	const uploadOptions: CloudinaryUploadWidgetOptions = {
 		maxFiles: 1,
@@ -50,6 +53,10 @@ export function ImageUploadButton({
 		try {
 			if (result.info && typeof result.info === "object") {
 				await addImage(result.info.secure_url, result.info.public_id);
+				setValue?.({
+					url: result.info.secure_url,
+					publicId: result.info.public_id,
+				});
 				addToast({
 					title: "Image uploaded successfully!",
 					color: "success",

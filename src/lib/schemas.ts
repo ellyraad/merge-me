@@ -36,3 +36,30 @@ export const loginDataSchema = z.object({
 	}),
 });
 export type LoginDataSchema = z.infer<typeof loginDataSchema>;
+
+export const onboardingSchema = z.object({
+	bio: z.string().min(10, {
+		error: "Must be 10 characters or more.",
+	}),
+
+	// https://en.wikipedia.org/wiki/List_of_short_place_names
+	city: z.string().min(1, {
+		error: "City is required",
+	}),
+
+	country: z.string().min(4, {
+		error: "Country is required",
+	}),
+
+	jobTitle: z.string(),
+
+	programmingLanguages: z.array(z.string()).max(3).min(1, {
+		error: "Select at least one programming language",
+	}),
+
+	photo: z.object({
+		publicId: z.string(),
+		url: z.url(),
+	}),
+});
+export type OnboardingSchema = z.infer<typeof onboardingSchema>;
