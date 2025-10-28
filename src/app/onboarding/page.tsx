@@ -20,7 +20,9 @@ export default async function OnboardingPage() {
 				</h1>
 			</div>
 
-			<OnboardingProfileForm details={{ languages, jobTitles }} />
+			<OnboardingProfileForm
+				details={{ languages, jobTitles, photo: currentUser?.photo }}
+			/>
 		</div>
 	);
 }
