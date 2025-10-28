@@ -8,13 +8,16 @@ import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { deleteUserImage } from "@/app/actions/image-actions";
 import type { Image } from "@/generated/prisma/client";
+import type { OnboardingSchema } from "@/lib/schemas";
 
 export function UploadedImagePreview({
 	userImage,
+	setValue,
 	isUploading = false,
 }: {
 	userImage?: Image | null;
 	isUploading?: boolean;
+	setValue?: (value: OnboardingSchema["photo"]) => void;
 }) {
 	const router = useRouter();
 
@@ -32,6 +35,7 @@ export function UploadedImagePreview({
 			if (!res.ok) throw new Error("Cloudinary delete failed");
 
 			await deleteUserImage();
+			setValue?.({ url: "", publicId: "" });
 			router.refresh();
 		} catch (error) {
 			console.error("Failed to delete image:", error);
