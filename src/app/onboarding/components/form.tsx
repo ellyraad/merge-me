@@ -4,17 +4,25 @@ import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Input, Textarea } from "@heroui/input";
 import { Button, Grid } from "@primer/react-brand";
 import { type Key, useState } from "react";
-import type { JobTitle, ProgrammingLanguage } from "@/generated/prisma/client";
+import type {
+	Image,
+	JobTitle,
+	ProgrammingLanguage,
+} from "@/generated/prisma/client";
 import { FieldGroupWrapper } from "./field-group-wrapper";
 import { FormCardWrapper } from "./form-card-wrapper";
+import { ImageUploadButton } from "./image-upload-btn";
+import { UploadedImagePreview } from "./uploaded-image-preview";
 
 type FormDetails = {
 	languages: ProgrammingLanguage[];
 	jobTitles: JobTitle[];
+	photo?: Image | null;
 };
 
 export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 	const [choices, setChoices] = useState<(Key | null)[]>([null, null, null]);
+	const [isUploading, setIsUploading] = useState(false);
 
 	const getAvailableLanguages = (idx: Key | null) => {
 		const selectedIds = choices.filter(
@@ -97,7 +105,18 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 					className="rounded-lg"
 					span={{ xsmall: 12, medium: 6 }}
 				>
-					<FormCardWrapper title="Upload your best photo"></FormCardWrapper>
+					<FormCardWrapper title="Show your best look">
+						<ImageUploadButton
+							isUploading={isUploading}
+							onUploadingChange={setIsUploading}
+						/>
+						<div className="mx-auto my-5 w-fit">
+							<UploadedImagePreview
+								userImage={details.photo}
+								isUploading={isUploading}
+							/>
+						</div>
+					</FormCardWrapper>
 				</Grid.Column>
 
 				<Grid.Column span={12} className="flex justify-end">

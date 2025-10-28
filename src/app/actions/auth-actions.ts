@@ -3,7 +3,7 @@
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import type { User } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -15,6 +15,17 @@ import type { ActionResult } from "@/lib/types";
 
 export async function getUserByEmail(email: string) {
 	return await prisma.user.findUnique({ where: { email } });
+}
+
+export async function getAuthUser() {
+	const session = await auth();
+	const userId = session?.user?.id;
+	if (!userId) throw new Error("Unauthorized Access");
+
+	return await prisma.user.findUnique({
+		where: { id: userId },
+		include: { photo: true },
+	});
 }
 
 export async function signInUser(

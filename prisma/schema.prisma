@@ -20,13 +20,22 @@ model User {
   lastName       String
   email          String?  @unique
   passwordHash   String
-  image          String?
   bio            String
   createdAt      DateTime @default(now())
   doneOnboarding Boolean  @default(false)
+  photo          Image?
 
   programmingLanguages UserProgrammingLanguage[]
   jobTitles            UserJobTitle[]
+}
+
+model Image {
+  id       String  @id @default(cuid())
+  url      String?
+  publicId String?
+  userId   String  @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model JobTitle {
