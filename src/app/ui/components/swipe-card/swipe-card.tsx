@@ -7,7 +7,7 @@ import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useState } from "react";
 import { DiGitMerge } from "react-icons/di";
 import { FaHeart } from "react-icons/fa";
-import { FiX } from "react-icons/fi";
+import { FaX } from "react-icons/fa6";
 import { GoGitPullRequestClosed } from "react-icons/go";
 
 type SwipeDirection = "left" | "right";
@@ -139,11 +139,11 @@ function Card({
 							variant="flat"
 							color="danger"
 							fullWidth
-							radius="md"
+							radius="sm"
 							onPress={() => handleButtonSwipe("left")}
 							className="flex items-center"
 						>
-							<FiX size={25} />
+							<FaX size={15} />
 							<span className="font-bold text-lg">NGTM</span>
 						</Button>
 
@@ -151,6 +151,7 @@ function Card({
 							onPress={() => handleButtonSwipe("right")}
 							variant="solid"
 							color="success"
+							radius="sm"
 							fullWidth
 							className="flex items-center"
 						>
