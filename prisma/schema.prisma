@@ -29,6 +29,12 @@ model User {
 
   programmingLanguages UserProgrammingLanguage[]
   jobTitles            UserJobTitle[]
+
+  outgoingSwipes Swipe[] @relation("OutgoingSwipes")
+  incomingSwipes Swipe[] @relation("IncomingSwipes")
+
+  matchesA Match[] @relation("MatchesA")
+  matchesB Match[] @relation("MatchesB")
 }
 
 model Image {
@@ -73,4 +79,35 @@ model UserProgrammingLanguage {
   programmingLanguageId String
 
   @@unique([userId, programmingLanguageId])
+}
+
+enum SwipeType {
+  PASS
+  LIKE
+}
+
+model Swipe {
+  id String @id @default(cuid())
+
+  from      User      @relation("OutgoingSwipes", fields: [fromId], references: [id], onDelete: Cascade)
+  fromId    String
+  to        User      @relation("IncomingSwipes", fields: [toId], references: [id], onDelete: Cascade)
+  toId      String
+  type      SwipeType
+  createdAt DateTime  @default(now())
+
+  @@unique([fromId, toId])
+  @@index([toId, fromId])
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  userA     User     @relation("MatchesA", fields: [userAId], references: [id], onDelete: Cascade)
+  userAId   String
+  userB     User     @relation("MatchesB", fields: [userBId], references: [id], onDelete: Cascade)
+  userBId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userAId, userBId])
+  @@index([userBId, userAId])
 }
