@@ -166,13 +166,13 @@ function Card({
 			{isTop && (
 				<>
 					<motion.div
-						className="pointer-events-none absolute top-5 left-5 rounded-md bg-red-600 px-3 py-1 font-bold text-2xl text-white uppercase tracking-wide"
+						className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 rounded-full bg-red-600 p-7 font-bold text-8xl text-white uppercase tracking-wide"
 						style={{ opacity: nopeOpacity }}
 					>
 						<GoGitPullRequestClosed />
 					</motion.div>
 					<motion.div
-						className="pointer-events-none absolute top-5 right-5 rounded-md bg-blue-700 px-3 py-1 font-bold text-2xl text-white uppercase tracking-wide"
+						className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 rounded-full bg-blue-700 p-7 font-bold text-8xl text-white uppercase tracking-wide"
 						style={{ opacity: likeOpacity }}
 					>
 						<DiGitMerge />
