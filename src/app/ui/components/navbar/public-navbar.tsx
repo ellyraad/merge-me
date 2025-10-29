@@ -3,14 +3,20 @@
 import { Link } from "@heroui/link";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 import { Button } from "@primer/react-brand";
+import { Logo } from "../../base/logo";
 import { ThemeSwitcher } from "../../base/theme-switcher";
 
 export function PublicNavbar() {
 	return (
-		<Navbar className="dark:bg-background">
+		<Navbar className="py-3 dark:bg-background">
 			<NavbarBrand>
-				<Link color="foreground" href="/" className="font-bold text-lg">
-					MergeMe
+				<Link
+					color="foreground"
+					href="/"
+					className="flex gap-5 font-bold text-lg"
+				>
+					<Logo width={40} height={40} />
+					<span>MergeMe</span>
 				</Link>
 			</NavbarBrand>
 			<NavbarContent className="hidden gap-4 sm:flex" justify="center">

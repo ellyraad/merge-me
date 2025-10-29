@@ -27,6 +27,8 @@ export default function AppNavbar({
 	className,
 }: AppNavbarProps) {
 	const pathname = usePathname();
+	const navItems = [...topMenuItems, ...bottomMenuItems];
+	const currPage = navItems.filter(item => item.href === pathname);
 
 	return (
 		<Navbar isBordered maxWidth="full" className={className}>
@@ -36,7 +38,9 @@ export default function AppNavbar({
 				<NavbarContent justify="start" className="gap-5">
 					<div className="items-center gap-5 md:flex">
 						<NavbarBrand>
-							<p className="font-bold text-2xl text-inherit">MergeMe</p>
+							<p className="font-bold text-2xl text-inherit">
+								{currPage[0].label}
+							</p>
 						</NavbarBrand>
 
 						<FiChevronRight className="hidden text-2xl text-inherit md:inline-block" />
@@ -80,13 +84,13 @@ export default function AppNavbar({
 
 				<NavbarMenu className="flex flex-col justify-between gap-4 rounded-t-2xl border-1 border-gray-800 bg-gray-950 py-6">
 					<div>
-						{topMenuItems.map((item) => (
+						{topMenuItems.map(item => (
 							<SideNavItem key={item.label} {...item} />
 						))}
 					</div>
 
 					<div>
-						{bottomMenuItems.map((item) => (
+						{bottomMenuItems.map(item => (
 							<SideNavItem key={item.label} {...item} />
 						))}
 					</div>

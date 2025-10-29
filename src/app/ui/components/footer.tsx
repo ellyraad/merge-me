@@ -1,6 +1,7 @@
 import { Divider } from "@heroui/divider";
 import { Link } from "@heroui/link";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
+import { Logo } from "@/app/ui/base/logo";
 import FooterLinkGroup from "./footer-link-group";
 
 export default function FooterSection() {
@@ -20,9 +21,14 @@ export default function FooterSection() {
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-4">
 					{/* Brand Section */}
 					<div className="space-y-3">
-						<div className="flex items-center gap-2">
-							<Link color="foreground" className="font-bold text-2xl" href="/">
-								MergeMe
+						<div className="flex gap-2">
+							<Link
+								color="foreground"
+								className="flex flex-col gap-5 font-bold text-2xl"
+								href="/"
+							>
+								<Logo width={80} height={80} />
+								<span>MergeMe</span>
 							</Link>
 						</div>
 						<p className="text-default-500 text-sm">
