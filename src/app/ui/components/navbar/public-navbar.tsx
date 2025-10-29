@@ -3,9 +3,9 @@
 import { Link } from "@heroui/link";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 import { Button } from "@primer/react-brand";
-import { ThemeSwitcher } from "../base/theme-switcher";
+import { ThemeSwitcher } from "../../base/theme-switcher";
 
-export function NavBar() {
+export function PublicNavbar() {
 	return (
 		<Navbar className="dark:bg-background">
 			<NavbarBrand>
