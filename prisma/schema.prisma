@@ -35,6 +35,10 @@ model User {
 
   matchesA Match[] @relation("MatchesA")
   matchesB Match[] @relation("MatchesB")
+
+  conversationsA Conversation[] @relation("ConversationA")
+  conversationsB Conversation[] @relation("ConversationB")
+  sentMessages   Message[]
 }
 
 model Image {
@@ -108,6 +112,41 @@ model Match {
   userBId   String
   createdAt DateTime @default(now())
 
+  conversations Conversation[]
+
   @@unique([userAId, userBId])
   @@index([userBId, userAId])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  userA     User     @relation("ConversationA", fields: [userAId], references: [id], onDelete: Cascade)
+  userAId   String
+  userB     User     @relation("ConversationB", fields: [userBId], references: [id], onDelete: Cascade)
+  userBId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+  @@unique([userAId, userBId])
+  @@index([userBId, userAId])
+  @@index([matchId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId       String
+  content        String
+  createdAt      DateTime     @default(now())
+  isRead         Boolean      @default(false)
+  readAt         DateTime?
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
 }
