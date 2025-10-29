@@ -11,7 +11,7 @@ export default {
 
 			if (authRoutes.includes(nextUrl.pathname)) {
 				if (isLoggedIn) {
-					return Response.redirect(new URL("/feed", nextUrl));
+					return Response.redirect(new URL("/discover", nextUrl));
 				}
 
 				return true;
