@@ -33,7 +33,7 @@ export default function LoginForm() {
 				typeof authResult.data === "object" &&
 				authResult.data.doneOnboarding
 			) {
-				router.push("/feed");
+				router.push("/discover");
 			} else {
 				router.push("/onboarding");
 			}

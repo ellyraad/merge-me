@@ -9,3 +9,10 @@ export type ActionResult<T> =
 			status: "success";
 			data: T;
 	  };
+
+export type MenuItem = {
+	label: string;
+	href: string;
+	className?: string;
+	icon: React.ReactNode;
+};

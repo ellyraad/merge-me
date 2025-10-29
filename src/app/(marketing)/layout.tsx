@@ -1,4 +1,4 @@
-import { NavBar } from "../ui/components/navbar";
+import { PublicNavbar } from "../ui/components/navbar/public-navbar";
 
 export default function MarketingLayout({
 	children,
@@ -7,7 +7,7 @@ export default function MarketingLayout({
 }) {
 	return (
 		<main>
-			<NavBar />
+			<PublicNavbar />
 			{children}
 		</main>
 	);
