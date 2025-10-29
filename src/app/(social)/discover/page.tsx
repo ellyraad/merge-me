@@ -1,3 +1,9 @@
+import { CardStacks } from "@/app/ui/components/swipe-card/swipe-card";
+
 export default function DiscoverPage() {
-	return <h1 className="font-bold text-4xl">Discover</h1>;
+	return (
+		<main className="flex min-h-screen flex-col items-center justify-center">
+			<CardStacks />
+		</main>
+	);
 }
