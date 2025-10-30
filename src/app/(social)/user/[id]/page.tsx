@@ -1,9 +1,15 @@
 "use client";
 
+import { Button } from "@heroui/button";
+import { Image } from "@heroui/image";
 import { Spinner } from "@heroui/spinner";
-import { User } from "@heroui/user";
+import { Tooltip } from "@heroui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { FaComment } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
+import { InfoHeader } from "./components/profile-info";
+import { UserNotFoundFallback } from "./components/user-not-found";
 
 interface UserProfile {
 	id: string;
@@ -61,90 +67,86 @@ export default function ProfilePage() {
 	}
 
 	if (error) {
-		return (
-			<div className="container mx-auto max-w-4xl px-4 py-8">
-				<div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-danger border-dashed py-16">
-					<p className="text-danger text-xl">User not found</p>
-					<p className="text-foreground-400 text-sm">
-						The user you're looking for doesn't exist or has been removed.
-					</p>
-				</div>
-			</div>
-		);
+		return <UserNotFoundFallback />;
 	}
 
 	if (!user) {
 		return null;
 	}
 
-	const fullName = `${user.firstName} ${user.lastName}`;
-	const location = [user.city, user.country].filter(Boolean).join(", ");
-	const primaryJobTitle = user.jobTitles[0]?.name || "Developer";
-	const avatarUrl = user.photo?.url;
-
 	return (
 		<div className="container mx-auto max-w-4xl px-4 py-8">
-			<div className="flex flex-col gap-6">
+			<div className="flex flex-col gap-3">
 				{/* Header Section */}
-				<div className="flex flex-col items-center gap-4 rounded-lg bg-gray-900/60 p-6 sm:flex-row sm:items-start">
-					<User
-						avatarProps={{
-							src: avatarUrl,
-							size: "lg",
-							className: "h-24 w-24",
-						}}
-						name={<h1 className="font-bold text-2xl">{fullName}</h1>}
-						description={
-							<div className="flex flex-col gap-1">
-								<p className="text-foreground-500 text-sm">{primaryJobTitle}</p>
-								{location && (
-									<p className="text-foreground-400 text-xs">{location}</p>
-								)}
-							</div>
-						}
+				<div className="flex flex-col items-center gap-6 rounded-2xl border-1 border-gray-800 p-6 sm:flex-row sm:items-start">
+					<Image
+						alt={`Profile photo of ${user.firstName} ${user.lastName}`}
+						height={400}
+						src={user.photo?.url}
+						width={320}
+						className="border-2 border-gray-400 object-cover max-sm:mx-auto"
 					/>
+
+					<div className="flex w-full flex-col gap-4 md:w-5/9">
+						<div className="flex flex-col gap-4">
+							<InfoHeader
+								className="flex flex-col gap-1 max-sm:text-center"
+								firstName={user.firstName}
+								lastName={user.lastName}
+								jobTitle={user.jobTitles[0].name}
+								city={user.city}
+								country={user.country}
+							/>
+
+							<div className="mt-3 flex flex-col gap-2">
+								<h2 className="font-bold text-lg">Top Languages:</h2>
+								{user.programmingLanguages.map(lang => (
+									<div
+										key={lang.id}
+										className="rounded-lg border-2 border-green-950 bg-green-950/80 px-3 py-2 font-bold text-sm text-teal-200"
+									>
+										{lang.name}
+									</div>
+								))}
+							</div>
+						</div>
+
+						<div className="mt-2 flex w-full justify-between gap-2">
+							{/* TODO: should only appear to mutual user's profile */}
+							<Tooltip content="Message">
+								<Button
+									variant="solid"
+									radius="sm"
+									size="sm"
+									className="bg-green-800 text-white"
+								>
+									<FaComment size={16} /> Message
+								</Button>
+							</Tooltip>
+
+							{/* TODO: should only appear to a current user's profile */}
+							<Tooltip content="Edit Profile">
+								<Button
+									isIconOnly
+									variant="faded"
+									color="default"
+									radius="sm"
+									size="sm"
+								>
+									<FaPencil size={16} />
+								</Button>
+							</Tooltip>
+						</div>
+					</div>
 				</div>
 
 				{/* Bio Section */}
 				{user.bio && (
-					<div className="rounded-lg bg-gray-900/60 p-6">
-						<h2 className="mb-3 font-semibold text-lg">About</h2>
-						<p className="text-foreground-500">{user.bio}</p>
-					</div>
-				)}
+					<div className="rounded-2xl border-1 border-gray-800 p-6">
+						<h2 className="font-semibold text-2xl">Bio</h2>
 
-				{/* Programming Languages */}
-				{user.programmingLanguages.length > 0 && (
-					<div className="rounded-lg bg-gray-900/60 p-6">
-						<h2 className="mb-3 font-semibold text-lg">
-							Programming Languages
-						</h2>
-						<div className="flex flex-wrap gap-2">
-							{user.programmingLanguages.map(lang => (
-								<span
-									key={lang.id}
-									className="rounded-full bg-blue-600/20 px-4 py-2 text-blue-300 text-sm"
-								>
-									{lang.name}
-								</span>
-							))}
-						</div>
-					</div>
-				)}
-
-				{/* Job Titles */}
-				{user.jobTitles.length > 1 && (
-					<div className="rounded-lg bg-gray-900/60 p-6">
-						<h2 className="mb-3 font-semibold text-lg">Roles</h2>
-						<div className="flex flex-wrap gap-2">
-							{user.jobTitles.map(title => (
-								<span
-									key={title.id}
-									className="rounded-full bg-green-600/20 px-4 py-2 text-green-300 text-sm"
-								>
-									{title.name}
-								</span>
-							))}
+						<div className="mt-3">
+							<p>{user.bio}</p>
 						</div>
 					</div>
 				)}
