@@ -18,10 +18,7 @@ export async function GET(req: Request) {
 		const { searchParams } = new URL(req.url);
 		const userId = searchParams.get("id");
 
-		// If no ID provided, return current user's profile
 		const targetUserId = userId || session.user.id;
-
-		// Determine which fields to include based on whether it's the current user
 		const isOwnProfile = targetUserId === session.user.id;
 
 		const user = await prisma.user.findUnique({
@@ -30,12 +27,12 @@ export async function GET(req: Request) {
 				id: true,
 				firstName: true,
 				lastName: true,
-				email: isOwnProfile, // Only show email for own profile
+				email: isOwnProfile,
 				city: true,
 				country: true,
 				bio: true,
 				createdAt: true,
-				doneOnboarding: isOwnProfile, // Only show for own profile
+				doneOnboarding: isOwnProfile,
 				photo: {
 					select: {
 						url: true,
@@ -69,12 +66,33 @@ export async function GET(req: Request) {
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
+		// If viewing another user's profile, check for match
+		let matchInfo = null;
+		if (!isOwnProfile) {
+			const match = await prisma.match.findFirst({
+				where: {
+					OR: [
+						{ userAId: session.user.id, userBId: targetUserId },
+						{ userAId: targetUserId, userBId: session.user.id },
+					],
+				},
+				select: {
+					id: true,
+				},
+			});
+
+			if (match) {
+				matchInfo = { matchId: match.id };
+			}
+		}
+
 		return NextResponse.json({
 			...user,
 			programmingLanguages: user.programmingLanguages.map(
 				pl => pl.programmingLanguage,
 			),
 			jobTitles: user.jobTitles.map(jt => jt.jobTitle),
+			match: matchInfo,
 		});
 	} catch (error) {
 		console.error("Error fetching user:", error);

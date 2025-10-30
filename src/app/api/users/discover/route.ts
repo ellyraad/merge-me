@@ -57,14 +57,12 @@ export async function GET(req: Request) {
 		);
 		const userJobTitleIds = currentUser.jobTitles.map(jt => jt.jobTitleId);
 
-		// Get IDs of users already swiped on
 		const swipedUserIds = excludeSwiped
 			? currentUser.outgoingSwipes?.map(swipe => swipe.toId) || []
 			: [];
 
 		// Build OR conditions dynamically based on what the user has
 		const orConditions = [];
-
 		if (userLanguageIds.length > 0) {
 			orConditions.push({
 				programmingLanguages: {
