@@ -7,6 +7,7 @@ import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Grid } from "@primer/react-brand";
 import type { Image, JobTitle, ProgrammingLanguage } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type Key, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -17,13 +18,41 @@ import { FormCardWrapper } from "./form-card-wrapper";
 import { ImageUploadButton } from "./image-upload-btn";
 import { UploadedImagePreview } from "./uploaded-image-preview";
 
-type FormDetails = {
-	languages: ProgrammingLanguage[];
+type JobTitlesResponse = {
 	jobTitles: JobTitle[];
-	photo?: Image | null;
+	total: number;
 };
 
-export function OnboardingProfileForm({ details }: { details: FormDetails }) {
+type ProgrammingLanguagesResponse = {
+	programmingLanguages: ProgrammingLanguage[];
+	total: number;
+};
+
+export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
+	// Fetch job titles
+	const { data: jobTitlesData, isLoading: isLoadingJobTitles } =
+		useQuery<JobTitlesResponse>({
+			queryKey: ["jobTitles"],
+			queryFn: async () => {
+				const res = await fetch("/api/job-titles");
+				if (!res.ok) throw new Error("Failed to fetch job titles");
+				return res.json();
+			},
+		});
+
+	// Fetch programming languages
+	const { data: languagesData, isLoading: isLoadingLanguages } =
+		useQuery<ProgrammingLanguagesResponse>({
+			queryKey: ["programmingLanguages"],
+			queryFn: async () => {
+				const res = await fetch("/api/programming-languages");
+				if (!res.ok) throw new Error("Failed to fetch programming languages");
+				return res.json();
+			},
+		});
+
+	const jobTitles = jobTitlesData?.jobTitles ?? [];
+	const languages = languagesData?.programmingLanguages ?? [];
 	const [languageChoices, setLanguageChoices] = useState<(Key | null)[]>([
 		null,
 		null,
@@ -48,10 +77,10 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 			country: "",
 			jobTitle: "",
 			programmingLanguages: [],
-			photo: details.photo
+			photo: photo
 				? {
-						publicId: details.photo.publicId ?? "",
-						url: details.photo.url ?? "",
+						publicId: photo.publicId ?? "",
+						url: photo.url ?? "",
 					}
 				: { publicId: "", url: "" }, // Initialize with empty object
 		},
@@ -91,7 +120,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 		const selectedIds = languageChoices.filter(
 			(choice, i) => i !== idx && choice !== null,
 		);
-		return details.languages.filter(lang => !selectedIds.includes(lang.id));
+		return languages.filter(lang => !selectedIds.includes(lang.id));
 	};
 
 	const updateLanguageChoice = (index: number) => (key: Key | null) => {
@@ -102,12 +131,21 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 		const validChoices = updated
 			.filter(choice => choice !== null)
 			.map(choice => {
-				const lang = details.languages.find(l => l.id === choice);
+				const lang = languages.find(l => l.id === choice);
 				return lang?.name ?? "";
 			})
 			.filter(name => name !== "");
 		setValue("programmingLanguages", validChoices);
 	};
+
+	// Show loading state
+	if (isLoadingJobTitles || isLoadingLanguages) {
+		return (
+			<div className="my-10 flex justify-center">
+				<p className="text-lg">Loading form data...</p>
+			</div>
+		);
+	}
 
 	return (
 		<form className="my-10" onSubmit={handleSubmit(onSubmit)}>
@@ -150,13 +188,11 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 
 						<FieldGroupWrapper title="Current status/job title">
 							<Autocomplete
-								items={details.jobTitles}
+								items={jobTitles}
 								variant="bordered"
 								label="Job title"
 								onSelectionChange={key => {
-									const selectedJobTitle = details.jobTitles.find(
-										jt => jt.id === key,
-									);
+									const selectedJobTitle = jobTitles.find(jt => jt.id === key);
 									setValue("jobTitle", selectedJobTitle?.name ?? "");
 								}}
 							>
@@ -213,7 +249,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 								setValue={(value: OnboardingSchema["photo"]) =>
 									setValue("photo", value)
 								}
-								userImage={details.photo}
+								userImage={photo}
 								isUploading={isUploading}
 							/>
 						</div>
