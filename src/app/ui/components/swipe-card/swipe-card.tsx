@@ -1,43 +1,60 @@
 "use client";
 
-import { faker } from "@faker-js/faker";
 import { Button } from "@heroui/button";
-import { addToast } from "@heroui/react";
+import { addToast, Skeleton } from "@heroui/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DiGitMerge } from "react-icons/di";
 import { FaHeart } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { GoGitPullRequestClosed } from "react-icons/go";
+import type { DiscoverUser, SwipeResponse } from "@/lib/types";
 
 type SwipeDirection = "left" | "right";
 
 export interface SwipeCardProps {
-	onSwipe?: (direction: SwipeDirection, user: FakeUser) => void;
+	onSwipe?: (direction: SwipeDirection, user: DiscoverUser) => void;
 	stackSize?: number;
 }
 
-type FakeUser = {
-	id: string;
-	name: string;
-	age: number;
-	job: string;
-	bio: string;
-	avatar: string;
-};
-
 const SWIPE_THRESHOLD = 200;
-const DEFAULT_STACK = 3;
+const DEFAULT_STACK = 10;
 
-function generateFakeUser(): FakeUser {
-	return {
-		id: faker.string.uuid(),
-		name: faker.person.fullName(),
-		age: faker.number.int({ min: 18, max: 55 }),
-		job: faker.person.jobTitle(),
-		bio: faker.lorem.sentence(),
-		avatar: `https://picsum.photos/seed/${faker.string.uuid()}/640/800?blur=1`,
-	};
+// Fetch users from discover API
+async function fetchDiscoverUsers(limit: number): Promise<DiscoverUser[]> {
+	const response = await fetch(
+		`/api/users/discover?excludeSwiped=true&limit=${limit}`,
+	);
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch users");
+	}
+
+	return response.json();
+}
+
+// Record a swipe
+async function recordSwipe(
+	userId: string,
+	type: "LIKE" | "PASS",
+): Promise<SwipeResponse> {
+	const response = await fetch("/api/swipes", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			toId: userId,
+			type,
+		}),
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to record swipe");
+	}
+
+	return response.json();
 }
 
 // Card component with new drag mechanism
@@ -48,7 +65,7 @@ function Card({
 	totalCards,
 	onSwipe,
 }: {
-	user: FakeUser;
+	user: DiscoverUser;
 	isTop: boolean;
 	index: number;
 	totalCards: number;
@@ -92,11 +109,17 @@ function Card({
 			title: direction === "right" ? "LGTM!" : "Checks Failed",
 			description:
 				direction === "right"
-					? `You approved ${user.name}'s changes.`
-					: `You requested changes on ${user.name}'s code.`,
+					? `You approved ${user.firstName}'s changes.`
+					: `You requested changes on ${user.firstName}'s code.`,
 			color: direction === "right" ? "success" : "danger",
 		});
 	};
+
+	const fullName = `${user.firstName} ${user.lastName}`;
+	const location = [user.city, user.country].filter(Boolean).join(", ");
+	const primaryJobTitle = user.jobTitles[0]?.name || "Developer";
+	const avatarUrl =
+		user.photo?.url || `https://ui-avatars.com/api/?name=${fullName}`;
 
 	return (
 		<motion.div
@@ -119,18 +142,32 @@ function Card({
 			{/* Image */}
 			<div
 				className="flex-1 bg-center bg-cover"
-				style={{ backgroundImage: `url(${user.avatar})` }}
+				style={{ backgroundImage: `url(${avatarUrl})` }}
 			/>
 
 			{/* User Info */}
 			<div className="flex-none border-slate-800 border-t bg-slate-900 p-4 text-white">
-				<div className="flex items-baseline gap-2">
-					<div className="font-bold text-xl">
-						{user.name}, {user.age}
-					</div>
-					<div className="text-slate-400 text-sm">{user.job}</div>
+				<div className="flex flex-col gap-1">
+					<div className="font-bold text-xl">{fullName}</div>
+					<div className="text-slate-400 text-sm">{primaryJobTitle}</div>
+					{location && <div className="text-slate-500 text-xs">{location}</div>}
 				</div>
+
 				<div className="mt-2 text-slate-300 text-sm">{user.bio}</div>
+
+				{/* Programming Languages */}
+				{user.programmingLanguages.length > 0 && (
+					<div className="mt-3 flex flex-wrap gap-2">
+						{user.programmingLanguages.map(lang => (
+							<span
+								key={lang.id}
+								className="rounded-full bg-blue-600/20 px-3 py-1 text-blue-300 text-xs"
+							>
+								{lang.name}
+							</span>
+						))}
+					</div>
+				)}
 
 				{/* Action Buttons */}
 				{isTop && (
@@ -187,27 +224,145 @@ export function CardStacks({
 	onSwipe,
 	stackSize = DEFAULT_STACK,
 }: SwipeCardProps) {
-	const [users, setUsers] = useState<FakeUser[]>(() =>
-		Array.from({ length: stackSize }, generateFakeUser),
-	);
+	const queryClient = useQueryClient();
+	const [displayedUsers, setDisplayedUsers] = useState<DiscoverUser[]>([]);
+
+	// Fetch users from API
+	const {
+		data: users,
+		isLoading,
+		isFetching,
+		error,
+	} = useQuery({
+		queryKey: ["discover-users", stackSize],
+		queryFn: () => fetchDiscoverUsers(stackSize),
+		staleTime: 1000 * 60 * 5, // 5 minutes
+	});
+
+	// Initialize displayed users when data loads
+	useEffect(() => {
+		if (!users || users.length === 0) return;
+
+		setDisplayedUsers(prev => {
+			// If we have no cards, use the new data
+			if (prev.length === 0) {
+				return users;
+			}
+
+			// If we have cards, merge new users that aren't already displayed
+			const existingIds = new Set(prev.map(u => u.id));
+			const newUsers = users.filter(u => !existingIds.has(u.id));
+
+			// Only add new users if we actually got some
+			if (newUsers.length > 0) {
+				return [...newUsers, ...prev];
+			}
+
+			return prev;
+		});
+	}, [users]);
+
+	// Swipe mutation
+	const swipeMutation = useMutation({
+		mutationFn: ({ userId, type }: { userId: string; type: "LIKE" | "PASS" }) =>
+			recordSwipe(userId, type),
+		onSuccess: data => {
+			// Show match notification if there's a match
+			if (data.match) {
+				addToast({
+					title: "It's a Match!",
+					description: "You both liked each other! Start chatting now.",
+					color: "success",
+				});
+			}
+		},
+		onError: () => {
+			addToast({
+				title: "Error",
+				description: "Failed to record swipe. Please try again.",
+				color: "danger",
+			});
+		},
+	});
 
 	const handleSwipe = (direction: SwipeDirection) => {
-		const topUser = users[users.length - 1];
+		if (displayedUsers.length === 0) return;
+
+		const topUser = displayedUsers[displayedUsers.length - 1];
 		onSwipe?.(direction, topUser);
 
-		// Remove top card and add new one at bottom
-		setUsers(prev => [...prev.slice(0, -1), generateFakeUser()]);
+		// Record swipe
+		swipeMutation.mutate({
+			userId: topUser.id,
+			type: direction === "right" ? "LIKE" : "PASS",
+		});
+
+		// Remove top card
+		setDisplayedUsers(prev => prev.slice(0, -1));
+
+		// Fetch more users if we've run out
+		if (displayedUsers.length <= 1) {
+			queryClient.invalidateQueries({ queryKey: ["discover-users"] });
+		}
 	};
+
+	// Loading state
+	if (isLoading) {
+		return (
+			<Skeleton className="mt-5 rounded-lg">
+				<div className="h-[550px] w-[300px] sm:h-[600px] sm:w-[400px]" />
+			</Skeleton>
+		);
+	}
+
+	// Error state
+	if (error) {
+		return (
+			<div className="flex h-[550px] w-[300px] flex-col items-center justify-center gap-4 sm:h-[600px] sm:w-[400px]">
+				<p className="text-red-400">Failed to load users</p>
+				<Button
+					color="primary"
+					onPress={() =>
+						queryClient.invalidateQueries({ queryKey: ["discover-users"] })
+					}
+				>
+					Try Again
+				</Button>
+			</div>
+		);
+	}
+
+	// No users state
+	if (!users || users.length === 0 || displayedUsers.length === 0) {
+		return (
+			<div className="flex h-[550px] w-[300px] flex-col items-center justify-center gap-4 sm:h-[600px] sm:w-[400px]">
+				<p className="text-center text-slate-400">
+					No more users to show.
+					<br />
+					Check back later!
+				</p>
+				<Button
+					color="primary"
+					isLoading={isFetching}
+					onPress={() =>
+						queryClient.invalidateQueries({ queryKey: ["discover-users"] })
+					}
+				>
+					Refresh
+				</Button>
+			</div>
+		);
+	}
 
 	return (
 		<div className="relative isolate m-6 h-[550px] w-[300px] sm:h-[600px] sm:w-[400px]">
-			{users.map((user, index) => (
+			{displayedUsers.map((user, index) => (
 				<Card
 					key={user.id}
 					user={user}
-					isTop={index === users.length - 1}
+					isTop={index === displayedUsers.length - 1}
 					index={index}
-					totalCards={users.length}
+					totalCards={displayedUsers.length}
 					onSwipe={handleSwipe}
 				/>
 			))}
