@@ -79,7 +79,7 @@ export default function MessagesPage() {
 	}
 
 	return (
-		<main className="container mx-auto max-w-3xl px-4 py-8">
+		<main className="container mx-auto max-w-3xl py-8">
 			<div className="mb-6">
 				<h1 className="mb-2 font-bold text-3xl">Messages</h1>
 				<p className="text-foreground-500">
