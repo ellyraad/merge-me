@@ -1,106 +1,31 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { toResponse } from "@/lib/api-utils";
 import { updateUserSchema } from "@/lib/schemas";
+import { UserService } from "@/services";
 
 /**
  * GET /api/users?id=<userId>
  * Get user profile by ID (if id provided) or current authenticated user profile
  */
 export async function GET(req: Request) {
-	try {
-		const session = await auth();
+	const session = await auth();
 
-		if (!session?.user?.id) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
-
-		const { searchParams } = new URL(req.url);
-		const userId = searchParams.get("id");
-
-		const targetUserId = userId || session.user.id;
-		const isOwnProfile = targetUserId === session.user.id;
-
-		const user = await prisma.user.findUnique({
-			where: { id: targetUserId },
-			select: {
-				id: true,
-				firstName: true,
-				lastName: true,
-				email: isOwnProfile,
-				city: true,
-				country: true,
-				bio: true,
-				createdAt: true,
-				doneOnboarding: isOwnProfile,
-				photo: {
-					select: {
-						url: true,
-						publicId: true,
-					},
-				},
-				programmingLanguages: {
-					select: {
-						programmingLanguage: {
-							select: {
-								id: true,
-								name: true,
-							},
-						},
-					},
-				},
-				jobTitles: {
-					select: {
-						jobTitle: {
-							select: {
-								id: true,
-								name: true,
-							},
-						},
-					},
-				},
-			},
-		});
-
-		if (!user) {
-			return NextResponse.json({ error: "User not found" }, { status: 404 });
-		}
-
-		// If viewing another user's profile, check for match
-		let matchInfo = null;
-		if (!isOwnProfile) {
-			const match = await prisma.match.findFirst({
-				where: {
-					OR: [
-						{ userAId: session.user.id, userBId: targetUserId },
-						{ userAId: targetUserId, userBId: session.user.id },
-					],
-				},
-				select: {
-					id: true,
-				},
-			});
-
-			if (match) {
-				matchInfo = { matchId: match.id };
-			}
-		}
-
-		return NextResponse.json({
-			...user,
-			programmingLanguages: user.programmingLanguages.map(
-				pl => pl.programmingLanguage,
-			),
-			jobTitles: user.jobTitles.map(jt => jt.jobTitle),
-			match: matchInfo,
-		});
-	} catch (error) {
-		console.error("Error fetching user:", error);
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+	if (!session?.user?.id) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
+
+	const { searchParams } = new URL(req.url);
+	const userId = searchParams.get("id");
+
+	const targetUserId = userId || session.user.id;
+
+	const result = await UserService.getUserProfile({
+		userId: targetUserId,
+		currentUserId: session.user.id,
+	});
+
+	return toResponse(result);
 }
 
 /**
@@ -108,51 +33,26 @@ export async function GET(req: Request) {
  * Update current authenticated user profile
  */
 export async function PUT(req: Request) {
-	try {
-		const session = await auth();
+	const session = await auth();
 
-		if (!session?.user?.id) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+	if (!session?.user?.id) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	}
 
-		const body = await req.json();
-		const validated = updateUserSchema.safeParse(body);
+	const body = await req.json();
+	const validated = updateUserSchema.safeParse(body);
 
-		if (!validated.success) {
-			return NextResponse.json(
-				{ error: "Validation failed", issues: validated.error.issues },
-				{ status: 400 },
-			);
-		}
-
-		const user = await prisma.user.update({
-			where: { id: session.user.id },
-			data: validated.data,
-			select: {
-				id: true,
-				firstName: true,
-				lastName: true,
-				email: true,
-				city: true,
-				country: true,
-				bio: true,
-				createdAt: true,
-				doneOnboarding: true,
-				photo: {
-					select: {
-						url: true,
-						publicId: true,
-					},
-				},
-			},
-		});
-
-		return NextResponse.json(user);
-	} catch (error) {
-		console.error("Error updating user:", error);
+	if (!validated.success) {
 		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
+			{ error: "Validation failed", issues: validated.error.issues },
+			{ status: 400 },
 		);
 	}
+
+	const result = await UserService.updateUserProfile(
+		session.user.id,
+		validated.data,
+	);
+
+	return toResponse(result);
 }
