@@ -48,11 +48,6 @@ export async function GET(req: Request) {
 			},
 		});
 
-		console.log(
-			`\n\n-------------------------- CURRENT USER --------------------------`,
-		);
-		console.log(JSON.stringify(currentUser));
-
 		if (!currentUser) {
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
