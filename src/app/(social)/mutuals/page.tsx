@@ -25,7 +25,7 @@ export default function MutualsPage() {
 	});
 
 	return (
-		<main>
+		<main className="container mx-auto max-w-3xl py-8">
 			<h1 className="font-bold text-2xl">
 				People who approved your{" "}
 				<Tooltip content="Pull Request" closeDelay={0}>
@@ -33,7 +33,7 @@ export default function MutualsPage() {
 				</Tooltip>{" "}
 			</h1>
 
-			<div className="mt-10 flex flex-col gap-4">
+			<div className="mt-10 flex flex-col gap-3">
 				{isLoading &&
 					Array.from({ length: 3 }).map((_, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: skeleton loaders don't change
