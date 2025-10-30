@@ -5,6 +5,10 @@ import { prisma } from "@/lib/prisma";
 /**
  * GET /api/conversations
  * Get all conversations for the current user
+ * Query params:
+ * - limit: number (default 50)
+ * - offset: number (default 0)
+ * - userId: string (optional) - check if conversation exists with this user
  */
 export async function GET(req: Request) {
 	try {
@@ -15,6 +19,38 @@ export async function GET(req: Request) {
 		}
 
 		const { searchParams } = new URL(req.url);
+		const otherUserId = searchParams.get("userId");
+
+		// check for existing convo
+		if (otherUserId) {
+			const conversation = await prisma.conversation.findFirst({
+				where: {
+					OR: [
+						{ userAId: session.user.id, userBId: otherUserId },
+						{ userAId: otherUserId, userBId: session.user.id },
+					],
+				},
+				select: {
+					id: true,
+					createdAt: true,
+					updatedAt: true,
+					matchId: true,
+					messages: {
+						select: {
+							id: true,
+						},
+						take: 1,
+					},
+				},
+			});
+
+			return NextResponse.json({
+				exists: !!conversation,
+				conversation: conversation || null,
+				hasMessages: conversation ? conversation.messages.length > 0 : false,
+			});
+		}
+
 		const limit = Number.parseInt(searchParams.get("limit") ?? "50", 10);
 		const offset = Number.parseInt(searchParams.get("offset") ?? "0", 10);
 
@@ -127,6 +163,7 @@ export async function GET(req: Request) {
 /**
  * POST /api/conversations
  * Create a new conversation (only if a match exists)
+ * Optionally send initial message with { matchId, initialMessage }
  */
 export async function POST(req: Request) {
 	try {
@@ -137,7 +174,7 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json();
-		const { matchId } = body;
+		const { matchId, initialMessage } = body;
 
 		if (!matchId || typeof matchId !== "string") {
 			return NextResponse.json(
@@ -146,7 +183,6 @@ export async function POST(req: Request) {
 			);
 		}
 
-		// Verify the match exists and the user is part of it
 		const match = await prisma.match.findUnique({
 			where: { id: matchId },
 		});
@@ -163,7 +199,6 @@ export async function POST(req: Request) {
 			);
 		}
 
-		// Create conversation (upsert to handle existing conversations)
 		const conversation = await prisma.conversation.upsert({
 			where: {
 				userAId_userBId: {
@@ -183,6 +218,26 @@ export async function POST(req: Request) {
 				updatedAt: true,
 			},
 		});
+
+		if (
+			initialMessage &&
+			typeof initialMessage === "string" &&
+			initialMessage.trim()
+		) {
+			await Promise.all([
+				prisma.message.create({
+					data: {
+						conversationId: conversation.id,
+						senderId: userId,
+						content: initialMessage.trim(),
+					},
+				}),
+				prisma.conversation.update({
+					where: { id: conversation.id },
+					data: { updatedAt: new Date() },
+				}),
+			]);
+		}
 
 		return NextResponse.json(conversation, { status: 201 });
 	} catch (error) {
