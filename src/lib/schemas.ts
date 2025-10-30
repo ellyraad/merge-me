@@ -63,3 +63,38 @@ export const onboardingSchema = z.object({
 	}),
 });
 export type OnboardingSchema = z.infer<typeof onboardingSchema>;
+
+// API Schemas
+export const updateUserSchema = z.object({
+	firstName: z
+		.string()
+		.min(nameMinLengthParams.length, { error: nameMinLengthParams.error })
+		.trim()
+		.optional(),
+	lastName: z
+		.string()
+		.min(nameMinLengthParams.length, { error: nameMinLengthParams.error })
+		.trim()
+		.optional(),
+	bio: z.string().min(10).optional(),
+	city: z.string().min(1).optional(),
+	country: z.string().min(4).optional(),
+});
+export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
+
+export const createSwipeSchema = z.object({
+	toId: z.cuid(),
+	type: z.enum(["PASS", "LIKE"]),
+});
+export type CreateSwipeSchema = z.infer<typeof createSwipeSchema>;
+
+export const createMessageSchema = z.object({
+	conversationId: z.cuid(),
+	content: z.string().min(1).max(1000),
+});
+export type CreateMessageSchema = z.infer<typeof createMessageSchema>;
+
+export const markMessageReadSchema = z.object({
+	messageId: z.cuid(),
+});
+export type MarkMessageReadSchema = z.infer<typeof markMessageReadSchema>;

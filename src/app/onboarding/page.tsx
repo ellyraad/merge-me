@@ -1,12 +1,7 @@
 import { getAuthUser } from "../actions/auth-actions";
-import { getJobTitles } from "../actions/jobtitle-actions";
-import { getProgrammingLanguages } from "../actions/proglang-actions";
 import { OnboardingProfileForm } from "./components/form";
 
 export default async function OnboardingPage() {
-	const languages = await getProgrammingLanguages();
-	const jobTitles = await getJobTitles();
-
 	const currentUser = await getAuthUser();
 
 	return (
@@ -20,9 +15,7 @@ export default async function OnboardingPage() {
 				</h1>
 			</div>
 
-			<OnboardingProfileForm
-				details={{ languages, jobTitles, photo: currentUser?.photo }}
-			/>
+			<OnboardingProfileForm photo={currentUser?.photo} />
 		</div>
 	);
 }

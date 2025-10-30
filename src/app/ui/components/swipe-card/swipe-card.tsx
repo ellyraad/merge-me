@@ -188,7 +188,7 @@ export function CardStacks({
 	stackSize = DEFAULT_STACK,
 }: SwipeCardProps) {
 	const [users, setUsers] = useState<FakeUser[]>(() =>
-		Array.from({ length: stackSize }, generateFakeUser)
+		Array.from({ length: stackSize }, generateFakeUser),
 	);
 
 	const handleSwipe = (direction: SwipeDirection) => {
@@ -196,7 +196,7 @@ export function CardStacks({
 		onSwipe?.(direction, topUser);
 
 		// Remove top card and add new one at bottom
-		setUsers((prev) => [...prev.slice(0, -1), generateFakeUser()]);
+		setUsers(prev => [...prev.slice(0, -1), generateFakeUser()]);
 	};
 
 	return (

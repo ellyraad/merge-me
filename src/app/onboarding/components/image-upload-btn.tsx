@@ -18,8 +18,8 @@ export function ImageUploadButton({
 	setValue,
 }: {
 	isUploading?: boolean;
-	onUploadingChange?: (uploading: boolean) => void;
-	setValue?: (value: OnboardingSchema["photo"]) => void;
+	onUploadingChange(uploading: boolean): void;
+	setValue(value: OnboardingSchema["photo"]): void;
 }) {
 	const uploadOptions: CloudinaryUploadWidgetOptions = {
 		maxFiles: 1,
@@ -85,7 +85,7 @@ export function ImageUploadButton({
 				onSuccess={onAddImage}
 				className={`w-full rounded-lg border-1 border-green-600 py-2 text-lg ${isUploading ? "opacity-50" : "bg-green-800"}`}
 				uploadPreset={process.env.CLOUDINARY_UPLOAD_PRESET}
-				signatureEndpoint="/api/sign-image"
+				signatureEndpoint="/api/images/signature"
 				options={uploadOptions}
 			>
 				<div>
