@@ -271,11 +271,23 @@ export async function getUserByEmail(
 }
 
 /**
+ * Type for authenticated user with photo
+ */
+export type AuthUser = User & {
+	photo: {
+		id: string;
+		url: string | null;
+		publicId: string | null;
+		userId: string;
+	} | null;
+};
+
+/**
  * Get authenticated user with photo
  */
 export async function getAuthUserById(
 	userId: string,
-): Promise<ServiceResult<unknown>> {
+): Promise<ServiceResult<AuthUser>> {
 	try {
 		const user = await prisma.user.findUnique({
 			where: { id: userId },
