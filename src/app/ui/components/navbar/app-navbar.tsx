@@ -39,7 +39,7 @@ export default function AppNavbar({
 					<div className="items-center gap-5 md:flex">
 						<NavbarBrand>
 							<p className="font-bold text-2xl text-inherit">
-								{currPage[0].label}
+								{currPage[0] ? currPage[0].label : ""}
 							</p>
 						</NavbarBrand>
 
