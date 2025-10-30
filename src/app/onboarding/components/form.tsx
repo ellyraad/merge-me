@@ -52,7 +52,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 				? {
 						publicId: details.photo.publicId ?? "",
 						url: details.photo.url ?? "",
-				  }
+					}
 				: { publicId: "", url: "" }, // Initialize with empty object
 		},
 	});
@@ -61,7 +61,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 
 	const router = useRouter();
 	const onSubmit: SubmitHandler<OnboardingSchema> = async (
-		data: OnboardingSchema
+		data: OnboardingSchema,
 	) => {
 		if (!watchedPhoto) {
 			await trigger("photo");
@@ -89,9 +89,9 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 
 	const getAvailableLanguages = (idx: Key | null) => {
 		const selectedIds = languageChoices.filter(
-			(choice, i) => i !== idx && choice !== null
+			(choice, i) => i !== idx && choice !== null,
 		);
-		return details.languages.filter((lang) => !selectedIds.includes(lang.id));
+		return details.languages.filter(lang => !selectedIds.includes(lang.id));
 	};
 
 	const updateLanguageChoice = (index: number) => (key: Key | null) => {
@@ -99,9 +99,13 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 		updated[index] = key;
 		setLanguageChoices(updated);
 
-		const validChoices = updated.filter(
-			(choice) => choice !== null
-		) as string[];
+		const validChoices = updated
+			.filter(choice => choice !== null)
+			.map(choice => {
+				const lang = details.languages.find(l => l.id === choice);
+				return lang?.name ?? "";
+			})
+			.filter(name => name !== "");
 		setValue("programmingLanguages", validChoices);
 	};
 
@@ -149,9 +153,14 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 								items={details.jobTitles}
 								variant="bordered"
 								label="Job title"
-								onSelectionChange={(key) => setValue("jobTitle", key as string)}
+								onSelectionChange={key => {
+									const selectedJobTitle = details.jobTitles.find(
+										jt => jt.id === key,
+									);
+									setValue("jobTitle", selectedJobTitle?.name ?? "");
+								}}
 							>
-								{(item) => (
+								{item => (
 									<AutocompleteItem key={item.id} textValue={item.name}>
 										{item.name}
 									</AutocompleteItem>
@@ -163,7 +172,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 							title="Your top programming languages"
 							layout="column"
 						>
-							{[0, 1, 2].map((idx) => (
+							{[0, 1, 2].map(idx => (
 								<Autocomplete
 									isRequired
 									variant="bordered"
@@ -172,7 +181,7 @@ export function OnboardingProfileForm({ details }: { details: FormDetails }) {
 									items={getAvailableLanguages(idx)}
 									onSelectionChange={updateLanguageChoice(idx)}
 								>
-									{(item) => (
+									{item => (
 										<AutocompleteItem key={item.id} textValue={item.name}>
 											{item.name}
 										</AutocompleteItem>
