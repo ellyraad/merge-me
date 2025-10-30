@@ -4,4 +4,27 @@
 
 /* Note: You may need to change the path to fit your project structure */
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+	--surface-0-d: #010409;
+	--surface-1-d: #0d1117;
+	--surface-2-d: #15191f;
+	--surface-3-d: #151b23;
+
+	--gh-green-300: #238636;
+	--gh-blue-300: #1f6feb;
+}
+
+@theme {
+	--color-background-dark: var(--surface-0-d);
+
+	--color-surface-0-d: var(--surface-0-d);
+	--color-surface-1-d: var(--surface-1-d);
+	--color-surface-2-d: var(--surface-2-d);
+	--color-surface-3-d: var(--surface-3-d);
+
+	--color-gh-green-300: var(--gh-green-300);
+
+	--color-gh-blue-300: var(--gh-blue-300);
+}
