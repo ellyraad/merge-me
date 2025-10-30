@@ -96,7 +96,9 @@ async function main() {
 				email,
 				passwordHash: faker.internet.password(),
 				bio: faker.lorem.sentence(),
-				doneOnboarding: faker.datatype.boolean(),
+				city: faker.location.city(),
+				country: faker.location.country(),
+				doneOnboarding: true,
 				photo: {
 					create: {
 						url: faker.image.avatar(),
