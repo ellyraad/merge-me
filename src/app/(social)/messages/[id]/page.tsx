@@ -1,13 +1,14 @@
 "use client";
 
+import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Input } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
+import { FaEllipsisVertical } from "react-icons/fa6";
 
 interface Message {
 	id: string;
@@ -51,14 +52,12 @@ export default function ConversationPage() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				// Fetch current user
 				const userResponse = await fetch("/api/users");
 				if (userResponse.ok) {
 					const userData = await userResponse.json();
 					setCurrentUserId(userData.id);
 				}
 
-				// Fetch conversation
 				const response = await fetch(`/api/conversations/${id}`, {
 					cache: "no-store",
 				});
@@ -70,7 +69,6 @@ export default function ConversationPage() {
 				const data = await response.json();
 				setConversation(data);
 
-				// Scroll to bottom after loading messages
 				setTimeout(() => {
 					messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 				}, 100);
@@ -166,75 +164,84 @@ export default function ConversationPage() {
 
 	return (
 		<main className="container mx-auto flex max-w-4xl flex-col px-4 py-8">
-			<Card className="flex h-[calc(100vh-200px)] flex-col">
-				<CardHeader className="flex gap-3 border-divider border-b">
-					<div className="flex flex-col">
-						<p className="font-bold text-lg">{fullName}</p>
+			<div className="flex items-center justify-between gap-3 border-gray-700 border-b-1 pb-5">
+				<div className="flex items-center gap-4">
+					<Avatar src={otherUser.photo?.url} size="md" />
+
+					<div>
+						<h1 className="font-bold text-lg">{fullName}</h1>
 					</div>
-				</CardHeader>
+				</div>
 
-				<Divider />
+				<div>
+					<FaEllipsisVertical />
+				</div>
+			</div>
 
-				<CardBody className="flex-1 overflow-y-auto">
-					{conversation.messages.length === 0 ? (
-						<div className="flex h-full items-center justify-center">
-							<p className="text-foreground-400">No messages yet</p>
-						</div>
-					) : (
-						<div className="flex flex-col gap-3 pb-4">
-							{conversation.messages.map(msg => {
-								const isOwn = msg.senderId === currentUserId;
-								return (
+			<div className="my-4">
+				{conversation.messages.length === 0 ? (
+					<div className="flex h-full items-center justify-center">
+						<p className="text-foreground-400">No messages yet</p>
+					</div>
+				) : (
+					<div className="flex flex-col gap-3 pb-4">
+						{conversation.messages.map(msg => {
+							const isOwn = msg.senderId === currentUserId;
+							return (
+								<div
+									key={msg.id}
+									className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+								>
 									<div
-										key={msg.id}
-										className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+										className={`max-w-[70%] rounded-lg px-4 py-2 ${
+											isOwn
+												? "bg-green-600 text-white"
+												: "bg-gray-700 text-white"
+										}`}
 									>
-										<div
-											className={`max-w-[70%] rounded-lg px-4 py-2 ${
-												isOwn
-													? "bg-green-600 text-white"
-													: "bg-gray-700 text-white"
-											}`}
-										>
-											<p className="wrap-break-words">{msg.content}</p>
-											<p className="mt-1 text-xs opacity-70">
-												{new Date(msg.createdAt).toLocaleTimeString([], {
-													hour: "2-digit",
-													minute: "2-digit",
-												})}
-											</p>
-										</div>
+										<p className="wrap-break-words">{msg.content}</p>
+										<p className="mt-1 text-xs opacity-70">
+											{new Date(msg.createdAt).toLocaleTimeString([], {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
+										</p>
 									</div>
-								);
-							})}
-							<div ref={messagesEndRef} />
-						</div>
-					)}
-				</CardBody>
+								</div>
+							);
+						})}
+						<div ref={messagesEndRef} />
+					</div>
+				)}
+			</div>
 
-				<Divider />
+			<Divider />
 
-				<div className="flex gap-2 p-4">
-					<Input
-						placeholder="Type a message..."
-						value={message}
-						onValueChange={setMessage}
-						onKeyDown={handleKeyPress}
-						isDisabled={isSending}
-						size="lg"
-					/>
+			<div className="flex flex-col gap-2 py-4">
+				<Input
+					variant="bordered"
+					placeholder="Type a message..."
+					value={message}
+					onValueChange={setMessage}
+					onKeyDown={handleKeyPress}
+					isDisabled={isSending}
+					size="lg"
+					radius="sm"
+				/>
+
+				<div className="flex w-full justify-end">
 					<Button
-						color="success"
 						onPress={handleSendMessage}
 						isLoading={isSending}
 						isDisabled={!message.trim() || isSending}
-						isIconOnly
-						size="lg"
+						size="md"
+						radius="sm"
+						className="bg-gh-green-300 text-foreground"
 					>
-						{!isSending && <FaPaperPlane />}
+						{!isSending && <FaPaperPlane />} Send
 					</Button>
 				</div>
-			</Card>
+			</div>
 		</main>
 	);
 }
