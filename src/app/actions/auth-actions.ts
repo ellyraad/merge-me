@@ -4,7 +4,7 @@ import type { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import { auth, signIn } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import {
 	type LoginDataSchema,
@@ -26,6 +26,10 @@ export async function getAuthUser() {
 		where: { id: userId },
 		include: { photo: true },
 	});
+}
+
+export async function signOutUser() {
+	await signOut({ redirectTo: "/login", redirect: true });
 }
 
 export async function signInUser(
