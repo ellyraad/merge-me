@@ -1,3 +1,4 @@
+import { FiUser } from "react-icons/fi";
 import { Logo } from "../../base/logo";
 import type { AppNavbarProps } from "./app-navbar";
 import { SideNavItem } from "./side-navitem";
@@ -24,6 +25,11 @@ export default function AppSideNav(props: AppNavbarProps) {
 			</div>
 
 			<ul>
+				<SideNavItem
+					label="Profile"
+					href={`/user/${props.currUserId}`}
+					icon={<FiUser size={26} />}
+				/>
 				{props.bottomMenuItems.map(item => (
 					<SideNavItem
 						key={item.href}

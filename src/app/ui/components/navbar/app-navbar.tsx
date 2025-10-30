@@ -11,17 +11,19 @@ import {
 	NavbarMenuToggle,
 } from "@heroui/react";
 import { usePathname } from "next/navigation";
-import { FiChevronRight, FiMessageCircle } from "react-icons/fi";
+import { FiChevronRight, FiMessageCircle, FiUser } from "react-icons/fi";
 import type { MenuItem } from "@/lib/types";
 import { SideNavItem } from "./side-navitem";
 
 export type AppNavbarProps = {
+	currUserId?: string;
 	topMenuItems: MenuItem[];
 	bottomMenuItems: MenuItem[];
 	className?: string;
 };
 
 export default function AppNavbar({
+	currUserId,
 	topMenuItems,
 	bottomMenuItems,
 	className,
@@ -90,6 +92,11 @@ export default function AppNavbar({
 					</div>
 
 					<div>
+						<SideNavItem
+							label="Profile"
+							href={`/user/${currUserId}`}
+							icon={<FiUser size={26} />}
+						/>
 						{bottomMenuItems.map(item => (
 							<SideNavItem key={item.label} {...item} />
 						))}

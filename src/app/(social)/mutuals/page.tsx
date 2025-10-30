@@ -65,6 +65,7 @@ export default function MutualsPage() {
 						return (
 							<MutualListItem
 								key={match.id}
+								userId={match.user.id}
 								matchId={match.id}
 								name={fullName}
 								jobTitle={primaryJobTitle}
