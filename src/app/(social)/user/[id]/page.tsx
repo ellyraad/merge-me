@@ -45,8 +45,23 @@ async function fetchUser(id: string): Promise<UserProfile> {
 	return response.json();
 }
 
+async function fetchCurrentUser(): Promise<UserProfile> {
+	const response = await fetch("/api/users");
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch current user");
+	}
+
+	return response.json();
+}
+
 export default function ProfilePage() {
 	const { id } = useParams<{ id: string }>();
+
+	const { data: currentUser } = useQuery({
+		queryKey: ["current-user"],
+		queryFn: fetchCurrentUser,
+	});
 
 	const {
 		data: user,
@@ -57,6 +72,8 @@ export default function ProfilePage() {
 		queryFn: () => fetchUser(id),
 		enabled: !!id,
 	});
+
+	const isOwnProfile = currentUser?.id === id;
 
 	if (isLoading) {
 		return (
@@ -111,31 +128,35 @@ export default function ProfilePage() {
 							</div>
 						</div>
 
-						<div className="mt-2 flex w-full justify-between gap-2">
-							{/* TODO: should only appear to mutual user's profile */}
-							<Tooltip content="Message">
-								<Button
-									variant="solid"
-									radius="sm"
-									size="sm"
-									className="bg-green-800 text-white"
-								>
-									<FaComment size={16} /> Message
-								</Button>
-							</Tooltip>
+						<div className="mt-2 flex w-full justify-end gap-2">
+							{/* Show message button only for other users' profiles */}
+							{!isOwnProfile && (
+								<Tooltip content="Message">
+									<Button
+										variant="solid"
+										radius="sm"
+										size="sm"
+										className="bg-green-800 text-white"
+									>
+										<FaComment size={16} /> Message
+									</Button>
+								</Tooltip>
+							)}
 
-							{/* TODO: should only appear to a current user's profile */}
-							<Tooltip content="Edit Profile">
-								<Button
-									isIconOnly
-									variant="faded"
-									color="default"
-									radius="sm"
-									size="sm"
-								>
-									<FaPencil size={16} />
-								</Button>
-							</Tooltip>
+							{/* Show edit button only for current user's profile */}
+							{isOwnProfile && (
+								<Tooltip content="Edit Profile">
+									<Button
+										isIconOnly
+										variant="faded"
+										color="default"
+										radius="sm"
+										size="sm"
+									>
+										<FaPencil size={16} />
+									</Button>
+								</Tooltip>
+							)}
 						</div>
 					</div>
 				</div>
