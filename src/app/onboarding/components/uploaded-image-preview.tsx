@@ -17,7 +17,7 @@ export function UploadedImagePreview({
 }: {
 	userImage?: Image | null;
 	isUploading?: boolean;
-	setValue?: (value: OnboardingSchema["photo"]) => void;
+	setValue(value: OnboardingSchema["photo"]): void;
 }) {
 	const router = useRouter();
 
@@ -26,11 +26,9 @@ export function UploadedImagePreview({
 		try {
 			setIsDeleting(true);
 
-			const res = await fetch("/api/delete-image", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				// biome-ignore lint/style/noNonNullAssertion: guaranteed to exist if delete button is shown since userImage?.publicId is checked
-				body: JSON.stringify({ publicId: userImage!.publicId }),
+			// biome-ignore lint/style/noNonNullAssertion: guaranteed to exist if delete button is shown since userImage?.publicId is checked
+			const res = await fetch(`/api/images/${userImage!.publicId}`, {
+				method: "DELETE",
 			});
 			if (!res.ok) throw new Error("Cloudinary delete failed");
 

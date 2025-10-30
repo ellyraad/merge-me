@@ -1,11 +1,13 @@
 import { cloudinary } from "@/lib/cloudinary";
 
-export async function POST(req: Request) {
+export async function DELETE(
+	_req: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const body = await req.json().catch(() => ({}));
-		const publicId = body?.publicId ?? null;
+		const id = (await params).id;
 
-		const result = await cloudinary.v2.uploader.destroy(publicId, {
+		const result = await cloudinary.v2.uploader.destroy(id, {
 			invalidate: true,
 			resource_type: "image",
 		});
