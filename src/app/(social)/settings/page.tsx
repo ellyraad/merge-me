@@ -49,7 +49,6 @@ export default function SettingsPage() {
 	if (!mounted) {
 		return (
 			<main className="container mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8">
-				<h1 className="font-bold text-3xl">Settings</h1>
 				<Card>
 					<CardHeader>
 						<h2 className="font-semibold text-xl">Appearance</h2>
@@ -72,65 +71,59 @@ export default function SettingsPage() {
 	}
 
 	return (
-		<main className="container mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8">
-			<h1 className="font-bold text-3xl">Settings</h1>
-
+		<main className="container mx-auto flex max-w-4xl flex-col gap-8 px-4 py-8">
 			{/* Theme Settings */}
-			<Card>
-				<CardHeader>
-					<h2 className="font-semibold text-xl">Appearance</h2>
-				</CardHeader>
-				<Divider />
-				<CardBody className="gap-4">
-					<Select
-						label="Theme"
-						placeholder="Select theme"
-						variant="bordered"
-						selectedKeys={resolvedTheme ? [resolvedTheme] : ["light"]}
-						onSelectionChange={handleThemeChange}
-					>
-						<SelectItem key="light">Light</SelectItem>
-						<SelectItem key="dark">Dark</SelectItem>
-					</Select>
-				</CardBody>
-			</Card>
+			<div className="flex items-center justify-between gap-4 border-b-1 border-b-gray-700 pb-3">
+				<h2 className="font-bold text-lg">Theme</h2>
 
-			{/* Account Actions */}
-			<Card>
-				<CardHeader>
-					<h2 className="font-semibold text-xl">Account</h2>
-				</CardHeader>
-				<Divider />
-				<CardBody className="gap-4">
+				<Select
+					fullWidth={false}
+					radius="sm"
+					variant="bordered"
+					selectedKeys={resolvedTheme ? [resolvedTheme] : ["light"]}
+					onSelectionChange={handleThemeChange}
+				>
+					<SelectItem key="light">Light</SelectItem>
+					<SelectItem key="dark">Dark</SelectItem>
+				</Select>
+			</div>
+
+			<div className="flex items-center justify-between gap-4 border-b-1 border-b-gray-700 pb-3">
+				<h2 className="font-bold text-lg">Account</h2>
+
+				<Button
+					color="danger"
+					variant="faded"
+					size="md"
+					radius="sm"
+					onPress={() => setIsSignOutModalOpen(true)}
+				>
+					Sign Out
+				</Button>
+			</div>
+
+			<div>
+				<h2 className="border-b-1 border-b-gray-700 pb-3 font-bold text-lg">
+					Advanced
+				</h2>
+
+				<div className="mt-2 flex gap-6">
+					<p>
+						Permanently delete your account and all associated data. This action
+						cannot be undone.
+					</p>
+
 					<Button
-						color="primary"
-						variant="solid"
-						size="lg"
-						onPress={() => setIsSignOutModalOpen(true)}
+						color="danger"
+						variant="flat"
+						size="md"
+						radius="sm"
+						className="w-fit"
 					>
-						Sign Out
+						Delete Account
 					</Button>
-				</CardBody>
-			</Card>
-
-			{/* Advanced Settings */}
-			<Card>
-				<CardHeader>
-					<h2 className="font-semibold text-xl">Advanced</h2>
-				</CardHeader>
-				<Divider />
-				<CardBody className="gap-4">
-					<div className="flex flex-col gap-2">
-						<p className="text-foreground-600 text-sm">
-							Permanently delete your account and all associated data. This
-							action cannot be undone.
-						</p>
-						<Button color="danger" variant="solid" size="lg" className="w-fit">
-							Delete Account
-						</Button>
-					</div>
-				</CardBody>
-			</Card>
+				</div>
+			</div>
 
 			{/* Sign Out Confirmation Modal */}
 			<Modal
