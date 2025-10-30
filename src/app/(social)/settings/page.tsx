@@ -3,15 +3,25 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
+import {
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+} from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { signOutUser } from "@/app/actions/auth-actions";
 import { useColorMode } from "@/app/contexts/colormode";
 
 export default function SettingsPage() {
 	const { setTheme, resolvedTheme } = useTheme();
 	const { setColorMode } = useColorMode();
 	const [mounted, setMounted] = useState(false);
+	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
+	const [isSigningOut, setIsSigningOut] = useState(false);
 
 	useEffect(() => setMounted(true), []);
 
@@ -22,6 +32,16 @@ export default function SettingsPage() {
 		if (selectedKey === "light" || selectedKey === "dark") {
 			setTheme(selectedKey);
 			setColorMode(selectedKey);
+		}
+	};
+
+	const handleSignOut = async () => {
+		try {
+			setIsSigningOut(true);
+			await signOutUser();
+		} catch (error) {
+			console.error("Error signing out:", error);
+			setIsSigningOut(false);
 		}
 	};
 
@@ -82,7 +102,12 @@ export default function SettingsPage() {
 				</CardHeader>
 				<Divider />
 				<CardBody className="gap-4">
-					<Button color="primary" variant="solid" size="lg">
+					<Button
+						color="primary"
+						variant="solid"
+						size="lg"
+						onPress={() => setIsSignOutModalOpen(true)}
+					>
 						Sign Out
 					</Button>
 				</CardBody>
@@ -106,6 +131,39 @@ export default function SettingsPage() {
 					</div>
 				</CardBody>
 			</Card>
+
+			{/* Sign Out Confirmation Modal */}
+			<Modal
+				isOpen={isSignOutModalOpen}
+				onClose={() => setIsSignOutModalOpen(false)}
+				placement="center"
+			>
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">
+						Confirm Sign Out
+					</ModalHeader>
+					<ModalBody>
+						<p>Are you sure you want to sign out?</p>
+					</ModalBody>
+					<ModalFooter>
+						<Button
+							color="default"
+							variant="light"
+							onPress={() => setIsSignOutModalOpen(false)}
+							isDisabled={isSigningOut}
+						>
+							Cancel
+						</Button>
+						<Button
+							color="primary"
+							onPress={handleSignOut}
+							isLoading={isSigningOut}
+						>
+							Sign Out
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</main>
 	);
 }

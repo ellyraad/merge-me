@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type Key, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { signOutUser } from "@/app/actions/auth-actions";
 import { submitOnboarding } from "@/app/actions/onboarding-actions";
 import { type OnboardingSchema, onboardingSchema } from "@/lib/schemas";
 import { FieldGroupWrapper } from "./field-group-wrapper";
@@ -253,7 +254,20 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 					</FormCardWrapper>
 				</Grid.Column>
 
-				<Grid.Column span={12} className="flex justify-end">
+				<Grid.Column
+					span={12}
+					className="flex items-center justify-between gap-5"
+				>
+					<HUButton
+						color="danger"
+						size="lg"
+						variant="faded"
+						type="button"
+						onPress={async () => signOutUser()}
+					>
+						Sign Out
+					</HUButton>
+
 					<HUButton
 						color="success"
 						size="lg"
