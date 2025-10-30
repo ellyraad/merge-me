@@ -13,7 +13,7 @@ import {
 import { Select, SelectItem } from "@heroui/select";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { signOutUser } from "@/app/actions/auth-actions";
+import { deleteUserAccount, signOutUser } from "@/app/actions/auth-actions";
 import { useColorMode } from "@/app/contexts/colormode";
 
 export default function SettingsPage() {
@@ -22,6 +22,8 @@ export default function SettingsPage() {
 	const [mounted, setMounted] = useState(false);
 	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 	const [isSigningOut, setIsSigningOut] = useState(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => setMounted(true), []);
 
@@ -42,6 +44,16 @@ export default function SettingsPage() {
 		} catch (error) {
 			console.error("Error signing out:", error);
 			setIsSigningOut(false);
+		}
+	};
+
+	const handleDeleteAccount = async () => {
+		try {
+			setIsDeleting(true);
+			await deleteUserAccount();
+		} catch (error) {
+			console.error("Error deleting account:", error);
+			setIsDeleting(false);
 		}
 	};
 
@@ -119,6 +131,7 @@ export default function SettingsPage() {
 						size="md"
 						radius="sm"
 						className="w-fit"
+						onPress={() => setIsDeleteModalOpen(true)}
 					>
 						Delete Account
 					</Button>
@@ -153,6 +166,42 @@ export default function SettingsPage() {
 							isLoading={isSigningOut}
 						>
 							Sign Out
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
+
+			{/* Delete Account Confirmation Modal */}
+			<Modal
+				isOpen={isDeleteModalOpen}
+				onClose={() => setIsDeleteModalOpen(false)}
+				placement="center"
+			>
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">
+						Delete Account
+					</ModalHeader>
+					<ModalBody>
+						<p>
+							Are you sure you want to delete your account? This action cannot
+							be undone and all your data will be permanently removed.
+						</p>
+					</ModalBody>
+					<ModalFooter>
+						<Button
+							color="default"
+							variant="light"
+							onPress={() => setIsDeleteModalOpen(false)}
+							isDisabled={isDeleting}
+						>
+							Cancel
+						</Button>
+						<Button
+							color="danger"
+							onPress={handleDeleteAccount}
+							isLoading={isDeleting}
+						>
+							Delete Account
 						</Button>
 					</ModalFooter>
 				</ModalContent>

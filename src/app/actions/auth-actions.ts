@@ -32,6 +32,31 @@ export async function signOutUser() {
 	await signOut({ redirectTo: "/login", redirect: true });
 }
 
+export async function deleteUserAccount(): Promise<ActionResult<string>> {
+	try {
+		const session = await auth();
+		const userId = session?.user?.id;
+
+		if (!userId) {
+			return { status: "error", error: "Unauthorized" };
+		}
+
+		await prisma.user.delete({
+			where: { id: userId },
+		});
+
+		await signOut({ redirectTo: "/login", redirect: true });
+
+		return { status: "success", data: "Account deleted successfully" };
+	} catch (error) {
+		console.error("Error deleting account:", error);
+		return {
+			status: "error",
+			error: "Failed to delete account. Please try again.",
+		};
+	}
+}
+
 export async function signInUser(
 	data: LoginDataSchema,
 ): Promise<
