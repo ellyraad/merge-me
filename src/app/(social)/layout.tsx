@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { FaHeartbeat } from "react-icons/fa";
 import { FaGear, FaMagnifyingGlass } from "react-icons/fa6";
 import { FiMessageCircle } from "react-icons/fi";
@@ -10,7 +11,13 @@ export default async function ContentFeedLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const id = (await getAuthUser())?.id;
+	let id: string | undefined;
+
+	try {
+		id = (await getAuthUser())?.id;
+	} catch (error) {
+		redirect("/login");
+	}
 
 	const topMenu = [
 		{

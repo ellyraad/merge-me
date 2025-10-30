@@ -4,17 +4,21 @@ import type { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import { auth, signIn } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { auth, signIn, signOut } from "@/auth";
 import {
 	type LoginDataSchema,
 	type RegisterDataSchema,
 	registerDataSchema,
 } from "@/lib/schemas";
 import type { ActionResult } from "@/lib/types";
+import { UserService } from "@/services";
 
 export async function getUserByEmail(email: string) {
-	return await prisma.user.findUnique({ where: { email } });
+	const result = await UserService.getUserByEmail(email);
+	if (!result.success) {
+		throw new Error(result.error.message);
+	}
+	return result.data;
 }
 
 export async function getAuthUser() {
@@ -22,10 +26,45 @@ export async function getAuthUser() {
 	const userId = session?.user?.id;
 	if (!userId) throw new Error("Unauthorized Access");
 
-	return await prisma.user.findUnique({
-		where: { id: userId },
-		include: { photo: true },
-	});
+	const result = await UserService.getAuthUserById(userId);
+	if (!result.success) {
+		throw new Error(result.error.message);
+	}
+	return result.data;
+}
+
+export async function signOutUser() {
+	await signOut({ redirectTo: "/login", redirect: true });
+}
+
+export async function deleteUserAccount(): Promise<ActionResult<string>> {
+	try {
+		const session = await auth();
+		const userId = session?.user?.id;
+
+		if (!userId) {
+			return { status: "error", error: "Unauthorized" };
+		}
+
+		const result = await UserService.deleteUser(userId);
+
+		if (!result.success) {
+			return {
+				status: "error",
+				error: result.error.message,
+			};
+		}
+
+		await signOut({ redirectTo: "/login", redirect: true });
+
+		return { status: "success", data: result.data };
+	} catch (error) {
+		console.error("Error deleting account:", error);
+		return {
+			status: "error",
+			error: "Failed to delete account. Please try again.",
+		};
+	}
 }
 
 export async function signInUser(
@@ -79,30 +118,18 @@ export async function registerUser(
 		const { firstName, lastName, email, password } = validated.data;
 		const hashPassword = await bcrypt.hash(password, 10);
 
-		const isExistingUser = await prisma.user.findUnique({ where: { email } });
-		if (isExistingUser) {
-			return { status: "error", error: "Account is already in use" };
-		}
-
-		const newUser = await prisma.user.create({
-			data: {
-				firstName,
-				lastName,
-				email,
-				passwordHash: hashPassword,
-
-				// the following data will be altered during onboarding
-				bio: "",
-				programmingLanguages: {
-					create: [],
-				},
-				jobTitles: {
-					create: [],
-				},
-			},
+		const result = await UserService.createUser({
+			firstName,
+			lastName,
+			email,
+			passwordHash: hashPassword,
 		});
 
-		return { status: "success", data: newUser };
+		if (!result.success) {
+			return { status: "error", error: result.error.message };
+		}
+
+		return { status: "success", data: result.data };
 	} catch (error) {
 		console.error(error);
 
