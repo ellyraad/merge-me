@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -94,7 +95,7 @@ async function main() {
 				firstName,
 				lastName,
 				email,
-				passwordHash: faker.internet.password(),
+				passwordHash: await bcrypt.hash(process.env.SEED_DATA_PW as string, 10),
 				bio: faker.lorem.sentence(),
 				city: faker.location.city(),
 				country: faker.location.country(),
