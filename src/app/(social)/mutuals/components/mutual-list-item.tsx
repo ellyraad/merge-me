@@ -2,6 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
+import { Link } from "@heroui/link";
 import { Tooltip } from "@heroui/tooltip";
 import { User } from "@heroui/user";
 import { useRouter } from "next/navigation";
@@ -10,11 +11,13 @@ import { FaComment } from "react-icons/fa";
 
 export function MutualListItem({
 	matchId,
+	userId,
 	imageUrl,
 	name,
 	jobTitle,
 }: {
 	matchId: string;
+	userId: string;
 	imageUrl: string;
 	name: string;
 	jobTitle: string;
@@ -58,7 +61,14 @@ export function MutualListItem({
 							size: "lg",
 						}}
 						description={<p className="text-gray-400 text-lg">{jobTitle}</p>}
-						name={<p className="font-bold text-lg">{name}</p>}
+						name={
+							<Link
+								href={`/user/${userId}`}
+								className="font-bold text-green-400 text-lg underline-offset-2 hover:underline"
+							>
+								{name}
+							</Link>
+						}
 					/>
 
 					<Tooltip color="default" content="Start Chat" closeDelay={0}>

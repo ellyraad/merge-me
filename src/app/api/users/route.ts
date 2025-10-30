@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { updateUserSchema } from "@/lib/schemas";
 
 /**
- * GET /api/users
- * Get current authenticated user profile
+ * GET /api/users?id=<userId>
+ * Get user profile by ID (if id provided) or current authenticated user profile
  */
-export async function GET() {
+export async function GET(req: Request) {
 	try {
 		const session = await auth();
 
@@ -15,18 +15,27 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
+		const { searchParams } = new URL(req.url);
+		const userId = searchParams.get("id");
+
+		// If no ID provided, return current user's profile
+		const targetUserId = userId || session.user.id;
+
+		// Determine which fields to include based on whether it's the current user
+		const isOwnProfile = targetUserId === session.user.id;
+
 		const user = await prisma.user.findUnique({
-			where: { id: session.user.id },
+			where: { id: targetUserId },
 			select: {
 				id: true,
 				firstName: true,
 				lastName: true,
-				email: true,
+				email: isOwnProfile, // Only show email for own profile
 				city: true,
 				country: true,
 				bio: true,
 				createdAt: true,
-				doneOnboarding: true,
+				doneOnboarding: isOwnProfile, // Only show for own profile
 				photo: {
 					select: {
 						url: true,
