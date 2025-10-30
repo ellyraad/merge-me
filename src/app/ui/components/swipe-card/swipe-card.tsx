@@ -137,7 +137,7 @@ function Card({
 				cursor: isTop ? "grab" : "default",
 			}}
 			whileTap={isTop ? { cursor: "grabbing" } : undefined}
-			className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg bg-gray-700"
+			className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg border-1 border-gray-700 hover:border-gh-blue-300"
 		>
 			{/* Image */}
 			<div
@@ -146,7 +146,7 @@ function Card({
 			/>
 
 			{/* User Info */}
-			<div className="flex-none border-slate-800 border-t bg-slate-900 p-4 text-white">
+			<div className="flex-none border-slate-800 border-t bg-surface-2-d p-4 text-white">
 				<div className="flex flex-col gap-1">
 					<div className="font-bold text-xl">{fullName}</div>
 					<div className="text-slate-400 text-sm">{primaryJobTitle}</div>
@@ -173,12 +173,11 @@ function Card({
 				{isTop && (
 					<div className="mt-5 flex gap-2">
 						<Button
-							variant="flat"
+							variant="bordered"
 							color="danger"
 							fullWidth
-							radius="sm"
 							onPress={() => handleButtonSwipe("left")}
-							className="flex items-center"
+							className="flex items-center rounded-sm"
 						>
 							<FaX size={15} />
 							<span className="font-bold text-lg">NGTM</span>
@@ -188,9 +187,8 @@ function Card({
 							onPress={() => handleButtonSwipe("right")}
 							variant="solid"
 							color="success"
-							radius="sm"
 							fullWidth
-							className="flex items-center"
+							className="flex items-center rounded-sm bg-gh-green-300 text-foreground"
 						>
 							<span className="font-bold text-lg">LGTM</span>
 							<FaHeart size={15} />
