@@ -60,7 +60,7 @@ model JobTitle {
 
 model UserJobTitle {
   id         String   @id @default(cuid())
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   jobTitle   JobTitle @relation(fields: [jobTitleId], references: [id])
   jobTitleId String
@@ -77,7 +77,7 @@ model ProgrammingLanguage {
 
 model UserProgrammingLanguage {
   id                    String              @id @default(cuid())
-  user                  User                @relation(fields: [userId], references: [id])
+  user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                String
   programmingLanguage   ProgrammingLanguage @relation(fields: [programmingLanguageId], references: [id])
   programmingLanguageId String
