@@ -15,6 +15,7 @@ import { submitOnboarding } from "@/app/actions/onboarding-actions";
 import { type OnboardingSchema, onboardingSchema } from "@/lib/schemas";
 import { FieldGroupWrapper } from "./field-group-wrapper";
 import { FormCardWrapper } from "./form-card-wrapper";
+import { OnboardingFormSkeleton } from "./form-skeleton";
 import { ImageUploadButton } from "./image-upload-btn";
 import { UploadedImagePreview } from "./uploaded-image-preview";
 
@@ -140,11 +141,7 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 
 	// Show loading state
 	if (isLoadingJobTitles || isLoadingLanguages) {
-		return (
-			<div className="my-10 flex justify-center">
-				<p className="text-lg">Loading form data...</p>
-			</div>
-		);
+		return <OnboardingFormSkeleton />;
 	}
 
 	return (
