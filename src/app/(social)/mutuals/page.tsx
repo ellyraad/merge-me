@@ -1,41 +1,28 @@
+"use client";
+
+import { Skeleton } from "@heroui/skeleton";
 import { Tooltip } from "@heroui/tooltip";
+import { useQuery } from "@tanstack/react-query";
+import type { MatchesResponse } from "@/lib/types";
 
 import { MutualListItem } from "./components/mutual-list-item";
 
+async function fetchMatches(): Promise<MatchesResponse> {
+	const response = await fetch("/api/matches");
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch matches");
+	}
+
+	return response.json();
+}
+
 export default function MutualsPage() {
-	// FIXME: temporary
-	const fakeUsers = [
-		{
-			id: 1,
-			name: "Alice",
-			avatar:
-				"https://ui-avatars.com/api/?name=Alice&background=0D8ABC&color=fff",
-		},
-		{
-			id: 2,
-			name: "Bob",
-			avatar:
-				"https://ui-avatars.com/api/?name=Bob&background=FF6B6B&color=fff",
-		},
-		{
-			id: 3,
-			name: "Charlie",
-			avatar:
-				"https://ui-avatars.com/api/?name=Charlie&background=6C5CE7&color=fff",
-		},
-		{
-			id: 4,
-			name: "Diana",
-			avatar:
-				"https://ui-avatars.com/api/?name=Diana&background=00B894&color=fff",
-		},
-		{
-			id: 5,
-			name: "Ethan",
-			avatar:
-				"https://ui-avatars.com/api/?name=Ethan&background=0984E3&color=fff",
-		},
-	];
+	const { data, isLoading, error } = useQuery({
+		queryKey: ["matches"],
+		queryFn: fetchMatches,
+		staleTime: 1000 * 60 * 5, // 5 minutes
+	});
 
 	return (
 		<main>
@@ -47,14 +34,44 @@ export default function MutualsPage() {
 			</h1>
 
 			<div className="mt-10 flex flex-col gap-4">
-				{fakeUsers.map((user) => (
-					<MutualListItem
-						key={user.id}
-						name={user.name}
-						jobTitle="Software Engineer"
-						imageUrl={user.avatar}
-					/>
-				))}
+				{isLoading &&
+					Array.from({ length: 3 }).map((_, i) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: skeleton loaders don't change
+						<Skeleton key={`skeleton-${i}`} className="h-20 rounded-lg" />
+					))}
+
+				{error && (
+					<div className="text-center text-red-400">
+						Failed to load matches. Please try again later.
+					</div>
+				)}
+
+				{!(isLoading || error) && data?.matches.length === 0 && (
+					<div className="text-center text-slate-400">
+						No matches yet. Keep swiping to find people who share your
+						interests!
+					</div>
+				)}
+
+				{!(isLoading || error) &&
+					data?.matches.map(match => {
+						const fullName = `${match.user.firstName} ${match.user.lastName}`;
+						const primaryJobTitle =
+							match.user.jobTitles[0]?.name || "Developer";
+						const avatarUrl =
+							match.user.photo?.url ||
+							`https://ui-avatars.com/api/?name=${fullName}`;
+
+						return (
+							<MutualListItem
+								key={match.id}
+								matchId={match.id}
+								name={fullName}
+								jobTitle={primaryJobTitle}
+								imageUrl={avatarUrl}
+							/>
+						);
+					})}
 			</div>
 		</main>
 	);
