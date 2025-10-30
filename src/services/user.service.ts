@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma, User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { UpdateUserSchema } from "@/lib/schemas";
 import type { ServiceResult } from "./types";
@@ -236,5 +236,102 @@ export async function getDiscoverUsers({
 		return success(transformedUsers);
 	} catch (err) {
 		return error("INTERNAL", "Failed to fetch discover users", err);
+	}
+}
+
+/**
+ * Delete user account and all associated data
+ */
+export async function deleteUser(
+	userId: string,
+): Promise<ServiceResult<string>> {
+	try {
+		await prisma.user.delete({
+			where: { id: userId },
+		});
+
+		return success("User deleted successfully");
+	} catch (err) {
+		return error("INTERNAL", "Failed to delete user account", err);
+	}
+}
+
+/**
+ * Get user by email
+ */
+export async function getUserByEmail(
+	email: string,
+): Promise<ServiceResult<User | null>> {
+	try {
+		const user = await prisma.user.findUnique({ where: { email } });
+		return success(user);
+	} catch (err) {
+		return error("INTERNAL", "Failed to fetch user by email", err);
+	}
+}
+
+/**
+ * Get authenticated user with photo
+ */
+export async function getAuthUserById(
+	userId: string,
+): Promise<ServiceResult<unknown>> {
+	try {
+		const user = await prisma.user.findUnique({
+			where: { id: userId },
+			include: { photo: true },
+		});
+
+		if (!user) {
+			return error("NOT_FOUND", "User not found");
+		}
+
+		return success(user);
+	} catch (err) {
+		return error("INTERNAL", "Failed to fetch authenticated user", err);
+	}
+}
+
+export interface CreateUserParams {
+	firstName: string;
+	lastName: string;
+	email: string;
+	passwordHash: string;
+}
+
+/**
+ * Create a new user
+ */
+export async function createUser(
+	params: CreateUserParams,
+): Promise<ServiceResult<User>> {
+	try {
+		const { firstName, lastName, email, passwordHash } = params;
+
+		// Check if user already exists
+		const existingUser = await prisma.user.findUnique({ where: { email } });
+		if (existingUser) {
+			return error("VALIDATION", "Account is already in use");
+		}
+
+		const newUser = await prisma.user.create({
+			data: {
+				firstName,
+				lastName,
+				email,
+				passwordHash,
+				bio: "",
+				programmingLanguages: {
+					create: [],
+				},
+				jobTitles: {
+					create: [],
+				},
+			},
+		});
+
+		return success(newUser);
+	} catch (err) {
+		return error("INTERNAL", "Failed to create user", err);
 	}
 }
