@@ -1,7 +1,6 @@
 import { FaHeartbeat } from "react-icons/fa";
 import { FaGear, FaMagnifyingGlass } from "react-icons/fa6";
-import { FiMessageCircle, FiUser } from "react-icons/fi";
-import { auth } from "@/auth";
+import { FiMessageCircle } from "react-icons/fi";
 import { getAuthUser } from "../actions/auth-actions";
 import AppNavbar from "../ui/components/navbar/app-navbar";
 import AppSideNav from "../ui/components/navbar/app-sidenav";
