@@ -1,15 +1,15 @@
 "use client";
 
-import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
-import { Card } from "@heroui/card";
 import { Link } from "@heroui/link";
 import { Tooltip } from "@heroui/tooltip";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DiGitMerge } from "react-icons/di";
 import { FaComment } from "react-icons/fa";
+import { HoverableCard } from "@/app/ui/components/hoverable-card";
 import { MessageModal } from "@/app/ui/components/message-modal";
+import { UserAvatar } from "@/app/ui/components/user-avatar";
 
 export function MutualListItem({
 	matchId,
@@ -83,20 +83,9 @@ export function MutualListItem({
 
 	return (
 		<>
-			<Card
-				shadow="sm"
-				className="rounded-md border-1 border-gray-100 bg-surface-1-l/20 px-5 py-4 hover:border-gray-200 hover:bg-surface-1-l dark:border-gray-700 dark:bg-surface-1-d dark:hover:bg-surface-2-d"
-			>
+			<HoverableCard>
 				<div className="flex items-start gap-6">
-					<div>
-						<Avatar
-							src={imageUrl}
-							showFallback
-							name={name}
-							radius="full"
-							size="lg"
-						/>
-					</div>
+					<UserAvatar imageUrl={imageUrl} name={name} size="lg" />
 
 					<div className="flex flex-1 flex-col items-start text-left">
 						{/* FIXME: truncate to cater long names/messages */}
@@ -132,7 +121,7 @@ export function MutualListItem({
 						</Button>
 					</Tooltip>
 				</div>
-			</Card>
+			</HoverableCard>
 
 			<MessageModal
 				isOpen={isModalOpen}

@@ -3,6 +3,8 @@
 import { Skeleton } from "@heroui/skeleton";
 import { Tooltip } from "@heroui/tooltip";
 import { useQuery } from "@tanstack/react-query";
+import { EmptyState } from "@/app/ui/components/empty-state";
+import { ErrorState } from "@/app/ui/components/error-state";
 import type { MatchesResponse } from "@/lib/types";
 
 import { MutualListItem } from "./components/mutual-list-item";
@@ -41,16 +43,14 @@ export default function MutualsPage() {
 					))}
 
 				{error && (
-					<div className="text-center text-red-400">
-						Failed to load matches. Please try again later.
-					</div>
+					<ErrorState title="Failed to load matches. Please try again later." />
 				)}
 
 				{!(isLoading || error) && data?.matches.length === 0 && (
-					<div className="text-center text-slate-400">
-						No matches yet. Keep swiping to find people who share your
-						interests!
-					</div>
+					<EmptyState
+						title="No matches yet"
+						description="Keep swiping to find people who share your interests!"
+					/>
 				)}
 
 				{!(isLoading || error) &&
