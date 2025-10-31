@@ -4,6 +4,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Select, SelectItem } from "@heroui/select";
+import { addToast } from "@heroui/toast";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { deleteUserAccount, signOutUser } from "@/app/actions/auth-actions";
@@ -45,6 +46,12 @@ export default function SettingsPage() {
 		try {
 			setIsDeleting(true);
 			await deleteUserAccount();
+
+			addToast({
+				title: "Account deleted successfully.",
+				description: "Redirecting you to Login Page...",
+				color: "success",
+			});
 		} catch (error) {
 			console.error("Error deleting account:", error);
 			setIsDeleting(false);
