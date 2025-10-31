@@ -4,7 +4,7 @@ import { Button } from "@heroui/button";
 import { addToast, Skeleton, Tooltip } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { DiGitMerge } from "react-icons/di";
 import { FaHeart } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
@@ -16,8 +16,10 @@ export interface SwipeCardProps {
 	stackSize?: number;
 }
 
-const SWIPE_THRESHOLD = 200;
+const SWIPE_THRESHOLD = 100;
 const DEFAULT_STACK = 10;
+const ROTATION_RANGE = 30;
+const DRAG_ELASTIC = 0.6;
 
 async function fetchDiscoverUsers(limit: number): Promise<DiscoverUser[]> {
 	const response = await fetch(
@@ -53,163 +55,174 @@ async function recordSwipe(
 	return response.json();
 }
 
-function Card({
-	user,
-	isTop,
-	index,
-	totalCards,
-	onSwipe,
-}: {
-	user: DiscoverUser;
-	isTop: boolean;
-	index: number;
-	totalCards: number;
-	onSwipe?: (direction: SwipeDirection) => void;
-}) {
-	const x = useMotionValue(0);
-	const rotate = useTransform(x, [-400, 400], [-50, 50]);
-	const opacity = useTransform(x, [-400, -300, 0, 300, 400], [0, 1, 1, 1, 0]);
+const Card = memo(
+	({
+		user,
+		isTop,
+		index,
+		totalCards,
+		onSwipe,
+	}: {
+		user: DiscoverUser;
+		isTop: boolean;
+		index: number;
+		totalCards: number;
+		onSwipe?: (direction: SwipeDirection) => void;
+	}) => {
+		const x = useMotionValue(0);
+		const rotate = useTransform(
+			x,
+			[-400, 400],
+			[-ROTATION_RANGE, ROTATION_RANGE],
+		);
+		const opacity = useTransform(x, [-400, -300, 0, 300, 400], [0, 1, 1, 1, 0]);
 
-	const depth = totalCards - 1 - index;
-	const scale = 1 - depth * 0.03;
-	const translateY = depth * 10;
-	const zIndex = 100 + index;
+		const depth = totalCards - 1 - index;
+		const scale = 1 - depth * 0.03;
+		const translateY = depth * 10;
+		const zIndex = 100 + index;
 
-	const likeOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1]);
-	const nopeOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0]);
+		const likeOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1]);
+		const nopeOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0]);
 
-	const handleDragEnd = () => {
-		if (!isTop) return;
+		const handleDragEnd = () => {
+			if (!isTop) return;
 
-		const currentX = x.get();
+			const currentX = x.get();
 
-		if (currentX > SWIPE_THRESHOLD) {
-			onSwipe?.("right");
-			x.set(0);
-		} else if (currentX < -SWIPE_THRESHOLD) {
-			onSwipe?.("left");
-			x.set(0);
-		}
-	};
+			if (currentX > SWIPE_THRESHOLD) {
+				onSwipe?.("right");
+				x.set(0);
+			} else if (currentX < -SWIPE_THRESHOLD) {
+				onSwipe?.("left");
+				x.set(0);
+			}
+		};
 
-	const handleButtonSwipe = (direction: SwipeDirection) => {
-		if (!isTop) return;
-		onSwipe?.(direction);
-		addToast({
-			title: direction === "right" ? "LGTM!" : "Checks Failed",
-			description:
-				direction === "right"
-					? `You approved ${user.firstName}'s changes.`
-					: `You requested changes on ${user.firstName}'s code.`,
-			color: direction === "right" ? "success" : "danger",
-		});
-	};
+		const handleButtonSwipe = (direction: SwipeDirection) => {
+			if (!isTop) return;
+			onSwipe?.(direction);
+			addToast({
+				title: direction === "right" ? "LGTM!" : "Checks Failed",
+				description:
+					direction === "right"
+						? `You approved ${user.firstName}'s changes.`
+						: `You requested changes on ${user.firstName}'s code.`,
+				color: direction === "right" ? "success" : "danger",
+			});
+		};
 
-	const fullName = `${user.firstName} ${user.lastName}`;
-	const location = [user.city, user.country].filter(Boolean).join(", ");
-	const primaryJobTitle = user.jobTitles[0]?.name || "Developer";
-	const avatarUrl =
-		user.photo?.url || `https://ui-avatars.com/api/?name=${fullName}`;
+		const fullName = `${user.firstName} ${user.lastName}`;
+		const location = [user.city, user.country].filter(Boolean).join(", ");
+		const primaryJobTitle = user.jobTitles[0]?.name || "Developer";
+		const avatarUrl =
+			user.photo?.url || `https://ui-avatars.com/api/?name=${fullName}`;
 
-	return (
-		<motion.div
-			drag={isTop ? "x" : false}
-			dragConstraints={{ left: 0, right: 0 }}
-			dragElastic={1}
-			onDragEnd={handleDragEnd}
-			style={{
-				x: isTop ? x : 0,
-				rotate: isTop ? rotate : 0,
-				opacity,
-				scale,
-				y: translateY,
-				zIndex,
-				cursor: isTop ? "grab" : "default",
-			}}
-			whileTap={isTop ? { cursor: "grabbing" } : undefined}
-			className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg border-1 border-gray-300 shadow-md hover:border-gh-blue-300 dark:border-gray-700"
-		>
-			<div
-				className="flex-1 bg-center bg-cover"
-				style={{ backgroundImage: `url(${avatarUrl})` }}
-			/>
+		return (
+			<motion.div
+				drag={isTop ? "x" : false}
+				dragConstraints={{ left: 0, right: 0 }}
+				dragElastic={DRAG_ELASTIC}
+				onDragEnd={handleDragEnd}
+				style={{
+					x: isTop ? x : 0,
+					rotate: isTop ? rotate : 0,
+					opacity,
+					scale,
+					y: translateY,
+					zIndex,
+					cursor: isTop ? "grab" : "default",
+					touchAction: "none",
+				}}
+				whileTap={isTop ? { cursor: "grabbing" } : undefined}
+				className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg border-1 border-gray-300 shadow-md will-change-transform hover:border-gh-blue-300 dark:border-gray-700"
+			>
+				<div
+					className="flex-1 bg-center bg-cover will-change-transform"
+					style={{ backgroundImage: `url(${avatarUrl})` }}
+				/>
 
-			<div className="flex-none border-slate-800 border-t bg-surface-2-d p-4 text-white">
-				<div className="flex flex-col gap-1">
-					<div className="font-bold text-background-dark text-xl dark:text-foreground">
-						{fullName}
+				<div className="flex-none border-slate-800 border-t bg-surface-2-d p-4 text-white">
+					<div className="flex flex-col gap-1">
+						<div className="font-bold text-background-dark text-xl dark:text-foreground">
+							{fullName}
+						</div>
+						<div className="text-sm text-surface-1-d dark:text-foreground-400">
+							{primaryJobTitle}
+						</div>
+						{location && (
+							<div className="text-slate-500 text-xs">{location}</div>
+						)}
 					</div>
-					<div className="text-sm text-surface-1-d dark:text-foreground-400">
-						{primaryJobTitle}
+
+					<div className="mt-2 text-sm text-surface-2-d dark:text-slate-300">
+						{user.bio}
 					</div>
-					{location && <div className="text-slate-500 text-xs">{location}</div>}
-				</div>
 
-				<div className="mt-2 text-sm text-surface-2-d dark:text-slate-300">
-					{user.bio}
-				</div>
+					{user.programmingLanguages.length > 0 && (
+						<div className="mt-3 flex flex-wrap gap-2">
+							{user.programmingLanguages.map(lang => (
+								<span
+									key={lang.id}
+									className="rounded-sm bg-surface-1-l px-3 py-1 text-blue-950 text-xs dark:bg-blue-600/20 dark:text-blue-300"
+								>
+									{lang.name}
+								</span>
+							))}
+						</div>
+					)}
 
-				{user.programmingLanguages.length > 0 && (
-					<div className="mt-3 flex flex-wrap gap-2">
-						{user.programmingLanguages.map(lang => (
-							<span
-								key={lang.id}
-								className="rounded-sm bg-surface-1-l px-3 py-1 text-blue-950 text-xs dark:bg-blue-600/20 dark:text-blue-300"
+					{isTop && (
+						<div className="mt-5 flex gap-2">
+							<Tooltip content="Not Good To Me" closeDelay={0}>
+								<Button
+									variant="bordered"
+									color="danger"
+									fullWidth
+									onPress={() => handleButtonSwipe("left")}
+									className="flex items-center rounded-sm hover:bg-red-700 hover:text-white"
+								>
+									<FaX size={15} />
+									<span className="font-bold text-lg">NGTM</span>
+								</Button>
+							</Tooltip>
+
+							<Button
+								onPress={() => handleButtonSwipe("right")}
+								variant="solid"
+								color="success"
+								fullWidth
+								className="flex items-center rounded-sm bg-gh-green-300 text-white dark:text-foreground"
 							>
-								{lang.name}
-							</span>
-						))}
-					</div>
-				)}
+								<span className="font-bold text-lg">LGTM</span>
+								<FaHeart size={15} />
+							</Button>
+						</div>
+					)}
+				</div>
 
 				{isTop && (
-					<div className="mt-5 flex gap-2">
-						<Tooltip content="Not Good To Me" closeDelay={0}>
-							<Button
-								variant="bordered"
-								color="danger"
-								fullWidth
-								onPress={() => handleButtonSwipe("left")}
-								className="flex items-center rounded-sm hover:bg-red-700 hover:text-white"
-							>
-								<FaX size={15} />
-								<span className="font-bold text-lg">NGTM</span>
-							</Button>
-						</Tooltip>
-
-						<Button
-							onPress={() => handleButtonSwipe("right")}
-							variant="solid"
-							color="success"
-							fullWidth
-							className="flex items-center rounded-sm bg-gh-green-300 text-white dark:text-foreground"
+					<>
+						<motion.div
+							className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 rounded-full bg-red-600 p-7 font-bold text-8xl text-white uppercase tracking-wide will-change-transform"
+							style={{ opacity: nopeOpacity }}
 						>
-							<span className="font-bold text-lg">LGTM</span>
-							<FaHeart size={15} />
-						</Button>
-					</div>
+							<GoGitPullRequestClosed />
+						</motion.div>
+						<motion.div
+							className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 rounded-full bg-blue-700 p-7 font-bold text-8xl text-white uppercase tracking-wide will-change-transform"
+							style={{ opacity: likeOpacity }}
+						>
+							<DiGitMerge />
+						</motion.div>
+					</>
 				)}
-			</div>
+			</motion.div>
+		);
+	},
+);
 
-			{isTop && (
-				<>
-					<motion.div
-						className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 rounded-full bg-red-600 p-7 font-bold text-8xl text-white uppercase tracking-wide"
-						style={{ opacity: nopeOpacity }}
-					>
-						<GoGitPullRequestClosed />
-					</motion.div>
-					<motion.div
-						className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 rounded-full bg-blue-700 p-7 font-bold text-8xl text-white uppercase tracking-wide"
-						style={{ opacity: likeOpacity }}
-					>
-						<DiGitMerge />
-					</motion.div>
-				</>
-			)}
-		</motion.div>
-	);
-}
+Card.displayName = "Card";
 
 export function CardStacks({
 	onSwipe,
@@ -333,7 +346,7 @@ export function CardStacks({
 	}
 
 	return (
-		<div className="relative isolate m-6 h-[550px] w-[300px] sm:h-[600px] sm:w-[400px]">
+		<div className="relative isolate m-6 h-[550px] w-[300px] touch-none sm:h-[600px] sm:w-[400px]">
 			{displayedUsers.map((user, index) => (
 				<Card
 					key={user.id}
