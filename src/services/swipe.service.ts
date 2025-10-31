@@ -14,9 +14,6 @@ export interface CreateSwipeParams {
 	type: SwipeType;
 }
 
-/**
- * Get swipe history for a user
- */
 export async function getSwipes({
 	userId,
 	type,
@@ -86,16 +83,12 @@ export async function getSwipes({
 	}
 }
 
-/**
- * Create a swipe and check for matches
- */
 export async function createSwipe({
 	fromId,
 	toId,
 	type,
 }: CreateSwipeParams): Promise<ServiceResult<unknown>> {
 	try {
-		// Check if target user exists
 		const targetUser = await prisma.user.findUnique({
 			where: { id: toId },
 		});
@@ -104,7 +97,6 @@ export async function createSwipe({
 			return error("NOT_FOUND", "Target user not found");
 		}
 
-		// Create swipe (upsert to handle duplicate swipes)
 		const swipe = await prisma.swipe.upsert({
 			where: {
 				fromId_toId: {
@@ -127,7 +119,6 @@ export async function createSwipe({
 			},
 		});
 
-		// Check for mutual LIKE to create a match
 		let match = null;
 		if (type === "LIKE") {
 			const reciprocalSwipe = await prisma.swipe.findUnique({
@@ -140,7 +131,6 @@ export async function createSwipe({
 			});
 
 			if (reciprocalSwipe?.type === "LIKE") {
-				// Create match (ensure userA < userB for consistency)
 				const [userAId, userBId] = [fromId, toId].sort();
 
 				match = await prisma.match.upsert({

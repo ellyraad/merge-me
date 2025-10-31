@@ -36,10 +36,11 @@ export function ConversationListItem({
 				</div>
 
 				<div className="flex flex-col items-end gap-1">
-					<p className="text-gray-500 text-sm">
-						{/* biome-ignore lint/style/noNonNullAssertion: this component will not appear without a complete data */}
-						{formatRelativeTime(lastMessageTime!)}
-					</p>
+					{lastMessageTime && (
+						<p className="text-gray-500 text-sm">
+							{formatRelativeTime(lastMessageTime)}
+						</p>
+					)}
 
 					{unreadCount > 0 && (
 						<Chip color="primary" size="sm" variant="solid">

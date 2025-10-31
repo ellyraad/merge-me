@@ -12,36 +12,10 @@ import { FaPencil } from "react-icons/fa6";
 import { ErrorState } from "@/app/ui/components/error-state";
 import { LoadingState } from "@/app/ui/components/loading-state";
 import { MessageModal } from "@/app/ui/components/message-modal";
+import type { FullUserProfile } from "@/lib/types";
 import { InfoHeader } from "./components/profile-info";
 
-interface UserProfile {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email?: string;
-	city: string | null;
-	country: string | null;
-	bio: string | null;
-	createdAt: string;
-	doneOnboarding?: boolean;
-	photo: {
-		url: string;
-		publicId: string;
-	} | null;
-	programmingLanguages: Array<{
-		id: string;
-		name: string;
-	}>;
-	jobTitles: Array<{
-		id: string;
-		name: string;
-	}>;
-	match?: {
-		matchId: string;
-	} | null;
-}
-
-async function fetchUser(id: string): Promise<UserProfile> {
+async function fetchUser(id: string): Promise<FullUserProfile> {
 	const response = await fetch(`/api/users?id=${id}`);
 
 	if (!response.ok) {
@@ -51,7 +25,7 @@ async function fetchUser(id: string): Promise<UserProfile> {
 	return response.json();
 }
 
-async function fetchCurrentUser(): Promise<UserProfile> {
+async function fetchCurrentUser(): Promise<FullUserProfile> {
 	const response = await fetch("/api/users");
 
 	if (!response.ok) {
@@ -92,7 +66,6 @@ export default function ProfilePage() {
 		try {
 			setIsLoading(true);
 
-			// Check if conversation already exists
 			const checkResponse = await fetch(
 				`/api/conversations?userId=${user.id}`,
 				{
@@ -106,13 +79,11 @@ export default function ProfilePage() {
 
 			const checkData = await checkResponse.json();
 
-			// If conversation exists and has messages, go directly to it
 			if (checkData.exists && checkData.hasMessages) {
 				router.push(`/messages/${checkData.conversation.id}`);
 				return;
 			}
 
-			// If conversation exists but no messages, or doesn't exist, show modal
 			setIsModalOpen(true);
 		} catch (error) {
 			console.error("Error starting chat:", error);
@@ -127,7 +98,6 @@ export default function ProfilePage() {
 		}
 
 		try {
-			// Create conversation with initial message
 			const response = await fetch("/api/conversations", {
 				method: "POST",
 				headers: {
@@ -211,7 +181,6 @@ export default function ProfilePage() {
 							</div>
 
 							<div className="mt-2 flex w-full justify-end gap-2">
-								{/* Show message button only for other users' profiles who are matches */}
 								{!isOwnProfile && user.match && (
 									<Tooltip content="Message">
 										<Button
@@ -226,7 +195,6 @@ export default function ProfilePage() {
 									</Tooltip>
 								)}
 
-								{/* Show edit button only for current user's profile */}
 								{isOwnProfile && (
 									<Tooltip content="Edit Profile">
 										<Button
@@ -244,7 +212,6 @@ export default function ProfilePage() {
 						</div>
 					</div>
 
-					{/* Bio Section */}
 					{user.bio && (
 						<div className="rounded-lg border-1 border-gray-200 bg-surface-1-l/20 p-6 shadow-md dark:border-gray-800 dark:bg-surface-2-d">
 							<h2 className="font-semibold text-2xl">Bio</h2>

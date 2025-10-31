@@ -9,9 +9,7 @@ import { DiGitMerge } from "react-icons/di";
 import { FaHeart } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { GoGitPullRequestClosed } from "react-icons/go";
-import type { DiscoverUser, SwipeResponse } from "@/lib/types";
-
-type SwipeDirection = "left" | "right";
+import type { DiscoverUser, SwipeDirection, SwipeResponse } from "@/lib/types";
 
 export interface SwipeCardProps {
 	onSwipe?: (direction: SwipeDirection, user: DiscoverUser) => void;
@@ -21,7 +19,6 @@ export interface SwipeCardProps {
 const SWIPE_THRESHOLD = 200;
 const DEFAULT_STACK = 10;
 
-// Fetch users from discover API
 async function fetchDiscoverUsers(limit: number): Promise<DiscoverUser[]> {
 	const response = await fetch(
 		`/api/users/discover?excludeSwiped=true&limit=${limit}`,
@@ -34,7 +31,6 @@ async function fetchDiscoverUsers(limit: number): Promise<DiscoverUser[]> {
 	return response.json();
 }
 
-// Record a swipe
 async function recordSwipe(
 	userId: string,
 	type: "LIKE" | "PASS",
@@ -57,7 +53,6 @@ async function recordSwipe(
 	return response.json();
 }
 
-// Card component with new drag mechanism
 function Card({
 	user,
 	isTop,
@@ -71,18 +66,15 @@ function Card({
 	totalCards: number;
 	onSwipe?: (direction: SwipeDirection) => void;
 }) {
-	// Motion values for smooth dragging without re-renders
 	const x = useMotionValue(0);
 	const rotate = useTransform(x, [-400, 400], [-50, 50]);
 	const opacity = useTransform(x, [-400, -300, 0, 300, 400], [0, 1, 1, 1, 0]);
 
-	// Calculate stack position
 	const depth = totalCards - 1 - index;
 	const scale = 1 - depth * 0.03;
 	const translateY = depth * 10;
 	const zIndex = 100 + index;
 
-	// Swipe direction label opacity
 	const likeOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1]);
 	const nopeOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0]);
 
@@ -92,11 +84,9 @@ function Card({
 		const currentX = x.get();
 
 		if (currentX > SWIPE_THRESHOLD) {
-			// Swiped right
 			onSwipe?.("right");
 			x.set(0);
 		} else if (currentX < -SWIPE_THRESHOLD) {
-			// Swiped left
 			onSwipe?.("left");
 			x.set(0);
 		}
@@ -139,14 +129,12 @@ function Card({
 			whileTap={isTop ? { cursor: "grabbing" } : undefined}
 			className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg border-1 border-gray-300 shadow-md hover:border-gh-blue-300 dark:border-gray-700"
 		>
-			{/* Image */}
 			<div
 				className="flex-1 bg-center bg-cover"
 				style={{ backgroundImage: `url(${avatarUrl})` }}
 			/>
 
-			{/* User Info */}
-			<div className="flex-none border-gray-400 bg-surface-0-l p-4 text-white dark:border-slate-800 dark:bg-surface-2-d">
+			<div className="flex-none border-slate-800 border-t bg-surface-2-d p-4 text-white">
 				<div className="flex flex-col gap-1">
 					<div className="font-bold text-background-dark text-xl dark:text-foreground">
 						{fullName}
@@ -161,7 +149,6 @@ function Card({
 					{user.bio}
 				</div>
 
-				{/* Programming Languages */}
 				{user.programmingLanguages.length > 0 && (
 					<div className="mt-3 flex flex-wrap gap-2">
 						{user.programmingLanguages.map(lang => (
@@ -175,7 +162,6 @@ function Card({
 					</div>
 				)}
 
-				{/* Action Buttons */}
 				{isTop && (
 					<div className="mt-5 flex gap-2">
 						<Tooltip content="Not Good To Me" closeDelay={0}>
@@ -205,7 +191,6 @@ function Card({
 				)}
 			</div>
 
-			{/* Swipe Labels */}
 			{isTop && (
 				<>
 					<motion.div
@@ -233,7 +218,6 @@ export function CardStacks({
 	const queryClient = useQueryClient();
 	const [displayedUsers, setDisplayedUsers] = useState<DiscoverUser[]>([]);
 
-	// Fetch users from API
 	const {
 		data: users,
 		isLoading,
@@ -242,24 +226,20 @@ export function CardStacks({
 	} = useQuery({
 		queryKey: ["discover-users", stackSize],
 		queryFn: () => fetchDiscoverUsers(stackSize),
-		staleTime: 1000 * 60 * 5, // 5 minutes
+		staleTime: 1000 * 60 * 5,
 	});
 
-	// Initialize displayed users when data loads
 	useEffect(() => {
 		if (!users || users.length === 0) return;
 
 		setDisplayedUsers(prev => {
-			// If we have no cards, use the new data
 			if (prev.length === 0) {
 				return users;
 			}
 
-			// If we have cards, merge new users that aren't already displayed
 			const existingIds = new Set(prev.map(u => u.id));
 			const newUsers = users.filter(u => !existingIds.has(u.id));
 
-			// Only add new users if we actually got some
 			if (newUsers.length > 0) {
 				return [...newUsers, ...prev];
 			}
@@ -268,12 +248,10 @@ export function CardStacks({
 		});
 	}, [users]);
 
-	// Swipe mutation
 	const swipeMutation = useMutation({
 		mutationFn: ({ userId, type }: { userId: string; type: "LIKE" | "PASS" }) =>
 			recordSwipe(userId, type),
 		onSuccess: data => {
-			// Show match notification if there's a match
 			if (data.match) {
 				addToast({
 					title: "It's a Match!",
@@ -297,22 +275,18 @@ export function CardStacks({
 		const topUser = displayedUsers[displayedUsers.length - 1];
 		onSwipe?.(direction, topUser);
 
-		// Record swipe
 		swipeMutation.mutate({
 			userId: topUser.id,
 			type: direction === "right" ? "LIKE" : "PASS",
 		});
 
-		// Remove top card
 		setDisplayedUsers(prev => prev.slice(0, -1));
 
-		// Fetch more users if we've run out
 		if (displayedUsers.length <= 1) {
 			queryClient.invalidateQueries({ queryKey: ["discover-users"] });
 		}
 	};
 
-	// Loading state
 	if (isLoading) {
 		return (
 			<Skeleton className="mt-5 rounded-lg">
@@ -321,7 +295,6 @@ export function CardStacks({
 		);
 	}
 
-	// Error state
 	if (error) {
 		return (
 			<div className="flex h-[550px] w-[300px] flex-col items-center justify-center gap-4 sm:h-[600px] sm:w-[400px]">
@@ -338,7 +311,6 @@ export function CardStacks({
 		);
 	}
 
-	// No users state
 	if (!users || users.length === 0 || displayedUsers.length === 0) {
 		return (
 			<div className="flex h-[550px] w-[300px] flex-col items-center justify-center gap-4 sm:h-[600px] sm:w-[400px]">

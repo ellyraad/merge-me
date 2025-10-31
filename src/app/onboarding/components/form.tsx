@@ -6,7 +6,7 @@ import { Input, Textarea } from "@heroui/input";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Grid } from "@primer/react-brand";
-import type { Image, JobTitle, ProgrammingLanguage } from "@prisma/client";
+import type { Image } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type Key, useState } from "react";
@@ -14,24 +14,17 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { signOutUser } from "@/app/actions/auth-actions";
 import { submitOnboarding } from "@/app/actions/onboarding-actions";
 import { type OnboardingSchema, onboardingSchema } from "@/lib/schemas";
+import type {
+	JobTitlesResponse,
+	ProgrammingLanguagesResponse,
+} from "@/lib/types";
 import { FieldGroupWrapper } from "./field-group-wrapper";
 import { FormCardWrapper } from "./form-card-wrapper";
 import { OnboardingFormSkeleton } from "./form-skeleton";
 import { ImageUploadButton } from "./image-upload-btn";
 import { UploadedImagePreview } from "./uploaded-image-preview";
 
-type JobTitlesResponse = {
-	jobTitles: JobTitle[];
-	total: number;
-};
-
-type ProgrammingLanguagesResponse = {
-	programmingLanguages: ProgrammingLanguage[];
-	total: number;
-};
-
 export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
-	// Fetch job titles
 	const { data: jobTitlesData, isLoading: isLoadingJobTitles } =
 		useQuery<JobTitlesResponse>({
 			queryKey: ["jobTitles"],
@@ -42,7 +35,6 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 			},
 		});
 
-	// Fetch programming languages
 	const { data: languagesData, isLoading: isLoadingLanguages } =
 		useQuery<ProgrammingLanguagesResponse>({
 			queryKey: ["programmingLanguages"],
@@ -62,7 +54,6 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 	]);
 	const [isUploading, setIsUploading] = useState(false);
 
-	// form handling
 	const {
 		register,
 		handleSubmit,
@@ -140,7 +131,6 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 		setValue("programmingLanguages", validChoices);
 	};
 
-	// Show loading state
 	if (isLoadingJobTitles || isLoadingLanguages) {
 		return <OnboardingFormSkeleton />;
 	}

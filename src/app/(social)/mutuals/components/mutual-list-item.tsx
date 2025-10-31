@@ -32,7 +32,6 @@ export function MutualListItem({
 		try {
 			setIsLoading(true);
 
-			// Check if conversation already exists
 			const checkResponse = await fetch(`/api/conversations?userId=${userId}`, {
 				cache: "no-store",
 			});

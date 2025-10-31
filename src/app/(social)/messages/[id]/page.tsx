@@ -9,37 +9,13 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
-
-interface Message {
-	id: string;
-	content: string;
-	createdAt: string;
-	senderId: string;
-	isRead: boolean;
-	readAt: string | null;
-}
-
-interface ConversationUser {
-	id: string;
-	firstName: string;
-	lastName: string;
-	photo: {
-		url: string;
-	} | null;
-}
-
-interface ConversationData {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-	user: ConversationUser;
-	messages: Message[];
-}
+import { FaEllipsisVertical } from "react-icons/fa6";
+import type { ConversationDetail } from "@/lib/types";
 
 export default function ConversationPage() {
 	const { id } = useParams<{ id: string }>();
 	const router = useRouter();
-	const [conversation, setConversation] = useState<ConversationData | null>(
+	const [conversation, setConversation] = useState<ConversationDetail | null>(
 		null,
 	);
 	const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -118,7 +94,6 @@ export default function ConversationPage() {
 
 			const newMessage = await response.json();
 
-			// Update conversation with new message
 			setConversation(prev => {
 				if (!prev) {
 					return prev;
