@@ -10,7 +10,11 @@ export default function AppSideNav(props: AppNavbarProps) {
 		>
 			<div>
 				<div className="mb-10 px-5 pt-1">
-					<Logo width={50} height={50} />
+					<Logo
+						className="rounded-full border-1 border-gray-400 dark:border-0"
+						width={50}
+						height={50}
+					/>
 				</div>
 				<ul>
 					{props.topMenuItems.map(item => (

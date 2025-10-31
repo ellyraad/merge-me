@@ -1,6 +1,5 @@
 "use client";
 
-import { Spinner } from "@heroui/spinner";
 import { useEffect, useState } from "react";
 import type { ConversationListItem as ConversationListItemType } from "@/lib/types";
 import { ConversationListItem } from "./components/conversation-list-item";
@@ -39,20 +38,13 @@ export default function MessagesPage() {
 	}, []);
 
 	if (isLoading) {
-		return (
-			<main className="container mx-auto flex max-w-3xl items-center justify-center px-4 py-8">
-				<Spinner size="lg" />
-			</main>
-		);
+		return <LoadingState />;
 	}
 
 	if (error) {
 		return (
 			<main className="container mx-auto max-w-3xl px-4 py-8">
-				<div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-danger border-dashed py-16">
-					<p className="text-danger text-xl">Error loading conversations</p>
-					<p className="text-foreground-400 text-sm">{error}</p>
-				</div>
+				<ErrorState title="Error loading conversations" description={error} />
 			</main>
 		);
 	}
@@ -69,13 +61,10 @@ export default function MessagesPage() {
 			</div>
 
 			{conversations.length === 0 ? (
-				<div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-foreground-200 border-dashed py-16">
-					<p className="text-foreground-500 text-xl">No messages yet</p>
-					<p className="max-w-md text-center text-foreground-400 text-sm">
-						Start swiping and matching with other developers to begin
-						conversations!
-					</p>
-				</div>
+				<EmptyState
+					title="No messages yet"
+					description="Start swiping and matching with other developers to begin conversations!"
+				/>
 			) : (
 				<div className="flex flex-col gap-3">
 					{conversations.map(conversation => {

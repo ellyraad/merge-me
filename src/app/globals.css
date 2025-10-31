@@ -2,29 +2,48 @@
 @import "@primer/react-brand/lib/css/main.css";
 @plugin "../lib/heroui";
 
-/* Note: You may need to change the path to fit your project structure */
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+	--surface-0-l: #ffffff;
+	--surface-1-l: #e5e4ef;
+	--surface-2-l: #b2b2bc;
+	--surface-3-l: #82828c;
+
 	--surface-0-d: #010409;
 	--surface-1-d: #0d1117;
 	--surface-2-d: #15191f;
 	--surface-3-d: #151b23;
 
+	--gh-green-50: #7dda83;
+	--gh-green-100: #60bd68;
+	--gh-green-200: #43a14f;
 	--gh-green-300: #238636;
+	--gh-green-400: #004700;
+
 	--gh-blue-300: #1f6feb;
 }
 
 @theme {
+	--color-background-light: var(--surface-0-l);
 	--color-background-dark: var(--surface-0-d);
+
+	--color-surface-0-l: var(--surface-0-l);
+	--color-surface-1-l: var(--surface-1-l);
+	--color-surface-2-l: var(--surface-2-l);
+	--color-surface-3-l: var(--surface-3-l);
 
 	--color-surface-0-d: var(--surface-0-d);
 	--color-surface-1-d: var(--surface-1-d);
 	--color-surface-2-d: var(--surface-2-d);
 	--color-surface-3-d: var(--surface-3-d);
 
+	--color-gh-green-50: var(--gh-green-50);
+	--color-gh-green-100: var(--gh-green-100);
+	--color-gh-green-200: var(--gh-green-200);
 	--color-gh-green-300: var(--gh-green-300);
+	--color-gh-green-400: var(--gh-green-400);
 
 	--color-gh-blue-300: var(--gh-blue-300);
 }

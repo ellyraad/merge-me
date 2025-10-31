@@ -14,8 +14,10 @@ export function SideNavItem(props: MenuItem) {
 			}`}
 		>
 			<Link
-				className={`flex w-full items-center gap-4 rounded-lg border-y-1 border-y-transparent p-5 text-2xl text-foreground hover:bg-gray-900 ${
-					pathname === props.href ? "font-bold text-green-400" : ""
+				className={`flex w-full items-center gap-4 rounded-lg border-y-1 border-y-transparent p-5 text-2xl text-foreground hover:bg-gray-100 dark:hover:bg-gray-900 ${
+					pathname === props.href
+						? "font-bold text-gh-green-400 dark:text-green-400"
+						: ""
 				}`}
 				href={props.href}
 				size="lg"
