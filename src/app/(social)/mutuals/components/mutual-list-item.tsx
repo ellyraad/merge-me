@@ -85,7 +85,7 @@ export function MutualListItem({
 		<>
 			<HoverableCard>
 				<div className="flex items-start gap-6">
-					<UserAvatar imageUrl={imageUrl} name={name} size="lg" />
+					<UserAvatar src={imageUrl} name={name} size="lg" />
 
 					<div className="flex flex-1 flex-col items-start text-left">
 						{/* FIXME: truncate to cater long names/messages */}
