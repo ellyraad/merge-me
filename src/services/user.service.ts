@@ -116,12 +116,34 @@ export async function getUserProfile({
 
 export async function updateUserProfile(
 	userId: string,
-	data: UpdateUserSchema,
+	data: Omit<UpdateUserSchema, "photo">,
+	photo?: UpdateUserSchema["photo"],
 ): Promise<ServiceResult<unknown>> {
 	try {
+		// Build the update data
+		const updateData: Prisma.UserUpdateInput = {
+			...data,
+		};
+
+		// If photo is provided, update or create the Image record
+		if (photo) {
+			updateData.photo = {
+				upsert: {
+					create: {
+						url: photo.url,
+						publicId: photo.publicId,
+					},
+					update: {
+						url: photo.url,
+						publicId: photo.publicId,
+					},
+				},
+			};
+		}
+
 		const user = await prisma.user.update({
 			where: { id: userId },
-			data,
+			data: updateData,
 			select: {
 				...userProfileSelect,
 				email: true,

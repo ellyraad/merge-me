@@ -84,7 +84,9 @@ export function MutualListItem({
 		<>
 			<HoverableCard>
 				<div className="flex items-start gap-6">
-					<UserAvatar src={imageUrl} name={name} size="lg" />
+					<div className="h-15 w-14">
+						<UserAvatar src={imageUrl} name={name} size="lg" />
+					</div>
 
 					<div className="flex flex-1 flex-col items-start text-left">
 						{/* FIXME: truncate to cater long names/messages */}
@@ -96,7 +98,9 @@ export function MutualListItem({
 								{name}
 							</Link>
 
-							<DiGitMerge className="text-2xl text-blue-400" />
+							<div className="h-6 w-6">
+								<DiGitMerge className="text-2xl text-blue-400" />
+							</div>
 						</div>
 						<p>{jobTitle}</p>
 					</div>

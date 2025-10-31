@@ -4,6 +4,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Select, SelectItem } from "@heroui/select";
+import { addToast } from "@heroui/toast";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { deleteUserAccount, signOutUser } from "@/app/actions/auth-actions";
@@ -45,6 +46,12 @@ export default function SettingsPage() {
 		try {
 			setIsDeleting(true);
 			await deleteUserAccount();
+
+			addToast({
+				title: "Account deleted successfully.",
+				description: "Redirecting you to Login Page...",
+				color: "success",
+			});
 		} catch (error) {
 			console.error("Error deleting account:", error);
 			setIsDeleting(false);
@@ -138,6 +145,7 @@ export default function SettingsPage() {
 				title="Confirm Sign Out"
 				description="Are you sure you want to sign out?"
 				confirmLabel="Sign Out"
+				confirmClassName="rounded-sm bg-red-700 text-white"
 				confirmColor="primary"
 				isLoading={isSigningOut}
 			/>
@@ -147,6 +155,7 @@ export default function SettingsPage() {
 				onClose={() => setIsDeleteModalOpen(false)}
 				onConfirm={handleDeleteAccount}
 				title="Delete Account"
+				confirmClassName="bg-red-700 text-white rounded-sm"
 				description="Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
 				confirmLabel="Delete Account"
 				confirmColor="danger"

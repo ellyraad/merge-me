@@ -49,9 +49,13 @@ export async function PUT(req: Request) {
 		);
 	}
 
+	// Extract photo data if present
+	const { photo, ...userData } = validated.data;
+
 	const result = await UserService.updateUserProfile(
 		session.user.id,
-		validated.data,
+		userData,
+		photo,
 	);
 
 	return toResponse(result);
