@@ -4,7 +4,6 @@ import { Link } from "@heroui/link";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 import { Button } from "@primer/react-brand";
 import { Logo } from "../../base/logo";
-import { ThemeSwitcher } from "../../base/theme-switcher";
 
 export function PublicNavbar() {
 	return (
@@ -19,6 +18,7 @@ export function PublicNavbar() {
 					<span>MergeMe</span>
 				</Link>
 			</NavbarBrand>
+
 			<NavbarContent className="hidden gap-4 sm:flex" justify="center">
 				<NavbarItem>
 					<Link color="foreground" href="#">
@@ -36,15 +36,12 @@ export function PublicNavbar() {
 					</Link>
 				</NavbarItem>
 			</NavbarContent>
+
 			<NavbarContent justify="end">
 				<NavbarItem>
 					<Button as="a" href="/login" variant="primary" size="small">
 						Login
 					</Button>
-				</NavbarItem>
-
-				<NavbarItem>
-					<ThemeSwitcher />
 				</NavbarItem>
 			</NavbarContent>
 		</Navbar>

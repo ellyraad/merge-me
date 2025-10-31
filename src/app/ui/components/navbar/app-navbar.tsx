@@ -84,7 +84,7 @@ export default function AppNavbar({
 					</NavbarItem>
 				</NavbarContent>
 
-				<NavbarMenu className="flex flex-col justify-between gap-4 rounded-t-2xl border-1 border-gray-800 bg-gray-950 py-6">
+				<NavbarMenu className="flex flex-col justify-between gap-4 rounded-t-2xl border-1 border-gray-300 bg-gray-100/90 py-6 dark:border-gray-800 dark:bg-gray-950">
 					<div>
 						{topMenuItems.map(item => (
 							<SideNavItem key={item.label} {...item} />

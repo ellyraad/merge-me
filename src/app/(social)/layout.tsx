@@ -15,7 +15,7 @@ export default async function ContentFeedLayout({
 
 	try {
 		id = (await getAuthUser())?.id;
-	} catch (error) {
+	} catch (_error) {
 		redirect("/login");
 	}
 
@@ -38,21 +38,21 @@ export default async function ContentFeedLayout({
 	];
 
 	return (
-		<div>
+		<div className="mb-20">
 			<AppNavbar
 				currUserId={id}
 				className="block md:hidden"
 				topMenuItems={topMenu}
 				bottomMenuItems={bottomMenuItems}
 			/>
-			<div className="mx-auto my-5 h-[900px] w-11/12 gap-7 md:flex lg:w-8/12">
+			<div className="mx-auto my-5 h-[calc(100vh-100px)] w-11/12 gap-7 md:flex lg:w-8/12">
 				<AppSideNav
 					currUserId={id}
 					className="hidden md:block"
 					topMenuItems={topMenu}
 					bottomMenuItems={bottomMenuItems}
 				/>
-				<div className="w-full">{children}</div>
+				<div className="flex h-full w-full flex-col">{children}</div>
 			</div>
 		</div>
 	);

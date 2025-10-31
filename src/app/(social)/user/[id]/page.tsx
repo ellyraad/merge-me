@@ -3,16 +3,16 @@
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
-import { Spinner } from "@heroui/spinner";
 import { Tooltip } from "@heroui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaComment } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import { ErrorState } from "@/app/ui/components/error-state";
+import { LoadingState } from "@/app/ui/components/loading-state";
 import { MessageModal } from "@/app/ui/components/message-modal";
 import { InfoHeader } from "./components/profile-info";
-import { UserNotFoundFallback } from "./components/user-not-found";
 
 interface UserProfile {
 	id: string;
@@ -152,15 +152,18 @@ export default function ProfilePage() {
 	};
 
 	if (isUserLoading) {
-		return (
-			<div className="container mx-auto flex max-w-4xl items-center justify-center px-4 py-8">
-				<Spinner size="lg" />
-			</div>
-		);
+		return <LoadingState />;
 	}
 
 	if (error) {
-		return <UserNotFoundFallback />;
+		return (
+			<div className="container mx-auto max-w-4xl px-4 py-8">
+				<ErrorState
+					title="User not found"
+					description="The user you're looking for doesn't exist or has been removed."
+				/>
+			</div>
+		);
 	}
 
 	if (!user) {
@@ -174,13 +177,13 @@ export default function ProfilePage() {
 			<div className="container mx-auto max-w-4xl px-4 py-8">
 				<div className="flex flex-col gap-3">
 					{/* Header Section */}
-					<div className="flex flex-col items-center gap-6 rounded-lg border-1 border-gray-800 bg-surface-1-d p-6 sm:flex-row sm:items-start">
+					<div className="flex flex-col items-center gap-6 rounded-lg border-1 border-gray-200 bg-surface-1-l/30 p-6 shadow-md sm:flex-row sm:items-start dark:border-gray-800 dark:bg-surface-1-d">
 						<Image
 							alt={`Profile photo of ${user.firstName} ${user.lastName}`}
 							height={400}
 							src={user.photo?.url}
 							width={320}
-							className="rounded-sm border-2 border-gray-400 object-cover max-sm:mx-auto"
+							className="rounded-sm border-gray-400 object-cover max-sm:mx-auto dark:border-2"
 						/>
 
 						<div className="flex w-full flex-col gap-4 md:w-5/9">
@@ -199,7 +202,7 @@ export default function ProfilePage() {
 									{user.programmingLanguages.map(lang => (
 										<div
 											key={lang.id}
-											className="rounded-sm border-2 border-green-950 bg-green-950/80 px-3 py-2 font-bold text-sm text-teal-200"
+											className="rounded-sm border-1 border-green-300 bg-green-200 px-3 py-2 font-bold text-sm dark:border-green-950 dark:bg-green-950/80 dark:text-teal-200"
 										>
 											{lang.name}
 										</div>
@@ -243,7 +246,7 @@ export default function ProfilePage() {
 
 					{/* Bio Section */}
 					{user.bio && (
-						<div className="rounded-lg border-1 border-gray-800 bg-surface-2-d p-6">
+						<div className="rounded-lg border-1 border-gray-200 bg-surface-1-l/20 p-6 shadow-md dark:border-gray-800 dark:bg-surface-2-d">
 							<h2 className="font-semibold text-2xl">Bio</h2>
 
 							<div className="mt-3">

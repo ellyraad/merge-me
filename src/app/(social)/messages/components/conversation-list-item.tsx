@@ -1,7 +1,7 @@
-import { Avatar } from "@heroui/avatar";
-import { Card } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import Link from "next/link";
+import { HoverableCard } from "@/app/ui/components/hoverable-card";
+import { UserAvatar } from "@/app/ui/components/user-avatar";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface ConversationListItemProps {
@@ -22,21 +22,12 @@ export function ConversationListItem({
 	unreadCount = 0,
 }: ConversationListItemProps) {
 	return (
-		<Card
-			isPressable
-			className="rounded-md border-2 border-gray-700 bg-surface-1-d px-5 py-4 hover:border-gh-blue-300"
-		>
+		<HoverableCard>
 			<Link
 				className="flex items-start gap-6"
 				href={`/messages/${conversationId}`}
 			>
-				<Avatar
-					src={imageUrl}
-					showFallback
-					name={name}
-					radius="full"
-					size="lg"
-				/>
+				<UserAvatar src={imageUrl} name={name} size="lg" />
 
 				<div className="flex flex-1 flex-col items-start text-left">
 					{/* FIXME: truncate to cater long names/messages */}
@@ -46,7 +37,7 @@ export function ConversationListItem({
 
 				<div className="flex flex-col items-end gap-1">
 					<p className="text-gray-500 text-sm">
-						{/* // biome-ignore lint/style/noNonNullAssertion: this component will not appear without a complete data */}
+						{/* biome-ignore lint/style/noNonNullAssertion: this component will not appear without a complete data */}
 						{formatRelativeTime(lastMessageTime!)}
 					</p>
 
@@ -57,6 +48,6 @@ export function ConversationListItem({
 					)}
 				</div>
 			</Link>
-		</Card>
+		</HoverableCard>
 	);
 }

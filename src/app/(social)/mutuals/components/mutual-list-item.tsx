@@ -1,15 +1,15 @@
 "use client";
 
-import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
-import { Card } from "@heroui/card";
 import { Link } from "@heroui/link";
 import { Tooltip } from "@heroui/tooltip";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DiGitMerge } from "react-icons/di";
 import { FaComment } from "react-icons/fa";
+import { HoverableCard } from "@/app/ui/components/hoverable-card";
 import { MessageModal } from "@/app/ui/components/message-modal";
+import { UserAvatar } from "@/app/ui/components/user-avatar";
 
 export function MutualListItem({
 	matchId,
@@ -83,24 +83,16 @@ export function MutualListItem({
 
 	return (
 		<>
-			<Card className="rounded-md border-1 border-gray-700 bg-surface-1-d px-5 py-4 hover:bg-surface-2-d">
+			<HoverableCard>
 				<div className="flex items-start gap-6">
-					<div>
-						<Avatar
-							src={imageUrl}
-							showFallback
-							name={name}
-							radius="full"
-							size="lg"
-						/>
-					</div>
+					<UserAvatar src={imageUrl} name={name} size="lg" />
 
 					<div className="flex flex-1 flex-col items-start text-left">
 						{/* FIXME: truncate to cater long names/messages */}
 						<div className="flex items-center gap-2">
 							<Link
 								href={`/user/${userId}`}
-								className="font-bold text-green-400 text-lg underline-offset-2 hover:text-gh-blue-300 hover:underline"
+								className="font-bold text-gh-green-300 text-lg underline-offset-2 hover:text-gh-blue-300 hover:underline dark:text-green-400"
 							>
 								{name}
 							</Link>
@@ -116,15 +108,20 @@ export function MutualListItem({
 							variant="flat"
 							color="success"
 							radius="sm"
-							className="my-auto bg-gh-green-300 p-2"
+							className="my-auto bg-gh-green-50/40 p-2 dark:bg-gh-green-300"
 							onPress={handleStartChat}
 							isLoading={isLoading}
 						>
-							{!isLoading && <FaComment className="text-white" size={26} />}
+							{!isLoading && (
+								<FaComment
+									className="text-gh-green-400 dark:text-white"
+									size={26}
+								/>
+							)}
 						</Button>
 					</Tooltip>
 				</div>
-			</Card>
+			</HoverableCard>
 
 			<MessageModal
 				isOpen={isModalOpen}
