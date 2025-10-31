@@ -79,6 +79,12 @@ export const updateUserSchema = z.object({
 	bio: z.string().min(10).optional(),
 	city: z.string().min(1).optional(),
 	country: z.string().min(4).optional(),
+	photo: z
+		.object({
+			publicId: z.string(),
+			url: z.url(),
+		})
+		.optional(),
 });
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 

@@ -9,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaComment } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import { EditProfileModal } from "@/app/ui/components/edit-profile";
 import { ErrorState } from "@/app/ui/components/error-state";
 import { LoadingState } from "@/app/ui/components/loading-state";
 import { MessageModal } from "@/app/ui/components/message-modal";
@@ -40,6 +41,7 @@ export default function ProfilePage() {
 	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	const { data: currentUser } = useQuery({
 		queryKey: ["current-user"],
@@ -203,6 +205,7 @@ export default function ProfilePage() {
 											color="default"
 											size="sm"
 											className="rounded-sm"
+											onPress={() => setIsEditModalOpen(true)}
 										>
 											<FaPencil size={16} />
 										</Button>
@@ -232,6 +235,14 @@ export default function ProfilePage() {
 				recipientName={fullName}
 				onSend={handleSendMessage}
 			/>
+
+			{isOwnProfile && user && (
+				<EditProfileModal
+					isOpen={isEditModalOpen}
+					onClose={() => setIsEditModalOpen(false)}
+					user={user}
+				/>
+			)}
 		</>
 	);
 }
