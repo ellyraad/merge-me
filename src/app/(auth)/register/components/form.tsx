@@ -52,7 +52,7 @@ export default function RegisterForm() {
 						label="First Name"
 						placeholder=""
 						type="text"
-						variant="bordered"
+						variant="flat"
 						isInvalid={!!errors.firstName}
 						errorMessage={errors.firstName?.message}
 						{...register("firstName")}
@@ -62,7 +62,7 @@ export default function RegisterForm() {
 						label="Last Name"
 						placeholder=""
 						type="text"
-						variant="bordered"
+						variant="flat"
 						radius="sm"
 						isInvalid={!!errors.lastName}
 						errorMessage={errors.lastName?.message}
@@ -77,7 +77,7 @@ export default function RegisterForm() {
 					radius="sm"
 					label="Email"
 					type="email"
-					variant="bordered"
+					variant="flat"
 					isInvalid={!!errors.email}
 					errorMessage={errors.email?.message}
 					{...register("email")}
@@ -86,7 +86,7 @@ export default function RegisterForm() {
 				<Input
 					radius="sm"
 					isRequired
-					variant="bordered"
+					variant="flat"
 					label="Password"
 					type={isVisible ? "text" : "password"}
 					isInvalid={!!errors.password}

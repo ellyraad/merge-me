@@ -48,7 +48,7 @@ export default function LoginForm() {
 					isRequired
 					label="Email"
 					type="email"
-					variant="bordered"
+					variant="flat"
 					isInvalid={!!errors.email}
 					errorMessage={errors.email?.message}
 					{...register("email")}
@@ -57,7 +57,7 @@ export default function LoginForm() {
 				<Input
 					radius="sm"
 					isRequired
-					variant="bordered"
+					variant="flat"
 					label="Password"
 					type="password"
 					isInvalid={!!errors.password}
