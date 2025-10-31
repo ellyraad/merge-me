@@ -33,7 +33,14 @@ export default function AppNavbar({
 	const currPage = navItems.filter(item => item.href === pathname);
 
 	return (
-		<Navbar isBordered maxWidth="full" className={className}>
+		<Navbar
+			isBordered
+			maxWidth="full"
+			className={className}
+			classNames={{
+				menu: "max-h-[calc(100vh-4rem)] overflow-y-auto pb-safe",
+			}}
+		>
 			<NavbarMenuToggle className="md:hidden" />
 
 			<div className="mx-auto flex w-11/12 items-center md:w-8/12">
@@ -84,14 +91,14 @@ export default function AppNavbar({
 					</NavbarItem>
 				</NavbarContent>
 
-				<NavbarMenu className="flex flex-col justify-between gap-4 rounded-t-2xl border-1 border-gray-300 bg-gray-100/90 py-6 dark:border-gray-800 dark:bg-gray-950">
-					<div>
+				<NavbarMenu className="rounded-t-2xl border-1 border-gray-300 bg-gray-100/90 py-6 dark:border-gray-800 dark:bg-gray-950">
+					<div className="flex flex-col gap-4 pb-4">
 						{topMenuItems.map(item => (
 							<SideNavItem key={item.label} {...item} />
 						))}
 					</div>
 
-					<div>
+					<div className="flex flex-col gap-4 border-gray-300 border-t-1 pt-4 dark:border-gray-700">
 						<SideNavItem
 							label="Profile"
 							href={`/user/${currUserId}`}

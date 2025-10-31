@@ -101,17 +101,18 @@ export function EditProfileModal({
 			placement="center"
 			size="2xl"
 			scrollBehavior="inside"
-			classNames={{
-				base: "max-h-[90vh] w-11/12",
-				body: "gap-6 py-6",
-			}}
+			className="h-full w-11/12"
 		>
 			<ModalContent>
-				<form onSubmit={handleSubmit(onSubmit)}>
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="flex h-full flex-col"
+				>
 					<ModalHeader className="flex flex-col gap-1 font-bold text-lg">
 						Edit Profile
 					</ModalHeader>
-					<ModalBody>
+
+					<ModalBody className="">
 						<div className="flex flex-col gap-6">
 							<div>
 								<h3 className="mb-3 font-semibold text-base">Profile Photo</h3>
@@ -132,7 +133,7 @@ export function EditProfileModal({
 						</div>
 					</ModalBody>
 
-					<ModalFooter>
+					<ModalFooter className="shrink-0">
 						<Button
 							color="danger"
 							variant="light"
