@@ -39,26 +39,24 @@ export default async function ContentFeedLayout({
 	];
 
 	return (
-		<>
-			<div className="mb-20">
-				<AppNavbar
+		<div className="flex min-h-screen flex-col">
+			<AppNavbar
+				currUserId={id}
+				className="block md:hidden"
+				topMenuItems={topMenu}
+				bottomMenuItems={bottomMenuItems}
+			/>
+			<div className="mx-auto my-5 w-11/12 flex-1 gap-7 pb-10 md:flex lg:w-8/12">
+				<AppSideNav
 					currUserId={id}
-					className="block md:hidden"
+					className="hidden md:block"
 					topMenuItems={topMenu}
 					bottomMenuItems={bottomMenuItems}
 				/>
-				<div className="mx-auto my-5 h-[calc(100vh-100px)] w-11/12 gap-7 md:flex lg:w-8/12">
-					<AppSideNav
-						currUserId={id}
-						className="hidden md:block"
-						topMenuItems={topMenu}
-						bottomMenuItems={bottomMenuItems}
-					/>
-					<div className="flex h-full w-full flex-col">{children}</div>
-				</div>
+				<div className="flex w-full flex-col">{children}</div>
 			</div>
 
 			<AppFooter />
-		</>
+		</div>
 	);
 }
