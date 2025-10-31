@@ -140,7 +140,7 @@ export default function SettingsPage() {
 				onConfirm={handleSignOut}
 				title="Confirm Sign Out"
 				description="Are you sure you want to sign out?"
-				confirmText="Sign Out"
+				confirmLabel="Sign Out"
 				confirmColor="primary"
 				isLoading={isSigningOut}
 			/>
@@ -152,7 +152,7 @@ export default function SettingsPage() {
 				onConfirm={handleDeleteAccount}
 				title="Delete Account"
 				description="Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
-				confirmText="Delete Account"
+				confirmLabel="Delete Account"
 				confirmColor="danger"
 				isLoading={isDeleting}
 			/>
