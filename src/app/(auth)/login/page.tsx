@@ -1,26 +1,19 @@
-import Link from "next/link";
-import { Logo } from "@/app/ui/base/logo";
+import { AuthFooterLink } from "../components/auth-footer-link";
+import { AuthHeader } from "../components/auth-header";
 import LoginForm from "./components/form";
 
 export default function LoginPage() {
 	return (
 		<div className="flex flex-col items-center gap-10">
-			<div className="flex flex-col items-center gap-6">
-				<Logo width={70} height={70} />
-
-				<h1 className="font-bold text-2xl">Sign in to MergeMe</h1>
-			</div>
+			<AuthHeader title="Sign in to MergeMe" />
 
 			<LoginForm />
 
-			<div>
-				<p>
-					New to merge me?{" "}
-					<Link href="/register" className="underline underline-offset-2">
-						Create new account
-					</Link>{" "}
-				</p>
-			</div>
+			<AuthFooterLink
+				text="New to merge me?"
+				linkText="Create new account"
+				linkHref="/register"
+			/>
 		</div>
 	);
 }
