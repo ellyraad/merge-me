@@ -31,7 +31,6 @@ type ProgrammingLanguagesResponse = {
 };
 
 export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
-	// Fetch job titles
 	const { data: jobTitlesData, isLoading: isLoadingJobTitles } =
 		useQuery<JobTitlesResponse>({
 			queryKey: ["jobTitles"],
@@ -42,7 +41,6 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 			},
 		});
 
-	// Fetch programming languages
 	const { data: languagesData, isLoading: isLoadingLanguages } =
 		useQuery<ProgrammingLanguagesResponse>({
 			queryKey: ["programmingLanguages"],
@@ -62,7 +60,6 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 	]);
 	const [isUploading, setIsUploading] = useState(false);
 
-	// form handling
 	const {
 		register,
 		handleSubmit,
@@ -140,7 +137,6 @@ export function OnboardingProfileForm({ photo }: { photo?: Image | null }) {
 		setValue("programmingLanguages", validChoices);
 	};
 
-	// Show loading state
 	if (isLoadingJobTitles || isLoadingLanguages) {
 		return <OnboardingFormSkeleton />;
 	}

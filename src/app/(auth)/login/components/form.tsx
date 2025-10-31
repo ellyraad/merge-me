@@ -24,7 +24,7 @@ export default function LoginForm() {
 
 	const router = useRouter();
 	const onSubmit: SubmitHandler<LoginDataSchema> = async (
-		data: LoginDataSchema
+		data: LoginDataSchema,
 	) => {
 		const authResult = await signInUser(data);
 		handleFormSubmitResult(authResult, "Signed in successfully");

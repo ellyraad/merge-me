@@ -13,16 +13,12 @@ export interface MarkMessageReadParams {
 	currentUserId: string;
 }
 
-/**
- * Create a new message in a conversation
- */
 export async function createMessage({
 	conversationId,
 	senderId,
 	content,
 }: CreateMessageParams): Promise<ServiceResult<unknown>> {
 	try {
-		// Verify conversation exists and user is part of it
 		const conversation = await prisma.conversation.findUnique({
 			where: { id: conversationId },
 			select: {
@@ -42,7 +38,6 @@ export async function createMessage({
 			return error("FORBIDDEN", "You are not part of this conversation");
 		}
 
-		// Create message and update conversation timestamp
 		const [message] = await Promise.all([
 			prisma.message.create({
 				data: {
@@ -71,15 +66,11 @@ export async function createMessage({
 	}
 }
 
-/**
- * Mark a message as read
- */
 export async function markMessageAsRead({
 	messageId,
 	currentUserId,
 }: MarkMessageReadParams): Promise<ServiceResult<unknown>> {
 	try {
-		// Get message with conversation details
 		const message = await prisma.message.findUnique({
 			where: { id: messageId },
 			select: {
@@ -99,7 +90,6 @@ export async function markMessageAsRead({
 			return error("NOT_FOUND", "Message not found");
 		}
 
-		// Verify user is part of conversation
 		if (
 			message.conversation.userAId !== currentUserId &&
 			message.conversation.userBId !== currentUserId
@@ -107,12 +97,10 @@ export async function markMessageAsRead({
 			return error("FORBIDDEN", "You are not part of this conversation");
 		}
 
-		// Can only mark messages sent by others as read
 		if (message.senderId === currentUserId) {
 			return error("VALIDATION", "Cannot mark your own message as read");
 		}
 
-		// Update message
 		const updatedMessage = await prisma.message.update({
 			where: { id: messageId },
 			data: {

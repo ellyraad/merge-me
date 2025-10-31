@@ -2,10 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-/**
- * GET /api/job-titles
- * Get all available job titles
- */
 export async function GET() {
 	const session = await auth();
 

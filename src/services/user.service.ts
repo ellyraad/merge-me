@@ -4,9 +4,6 @@ import type { UpdateUserSchema } from "@/lib/schemas";
 import type { ServiceResult } from "./types";
 import { error, success } from "./types";
 
-/**
- * Common user select fields for profile queries
- */
 const userProfileSelect = {
 	id: true,
 	firstName: true,
@@ -43,9 +40,6 @@ const userProfileSelect = {
 	},
 } satisfies Prisma.UserSelect;
 
-/**
- * Transform user data to flatten nested relations
- */
 function transformUserProfile<
 	T extends {
 		programmingLanguages: { programmingLanguage: unknown }[];
@@ -72,9 +66,6 @@ export interface GetDiscoverUsersParams {
 	limit?: number;
 }
 
-/**
- * Get user profile by ID with optional match information
- */
 export async function getUserProfile({
 	userId,
 	currentUserId,
@@ -95,7 +86,6 @@ export async function getUserProfile({
 			return error("NOT_FOUND", "User not found");
 		}
 
-		// If viewing another user's profile, check for match
 		let matchInfo = null;
 		if (!isOwnProfile) {
 			const match = await prisma.match.findFirst({
@@ -124,9 +114,6 @@ export async function getUserProfile({
 	}
 }
 
-/**
- * Update user profile
- */
 export async function updateUserProfile(
 	userId: string,
 	data: UpdateUserSchema,
@@ -148,9 +135,6 @@ export async function updateUserProfile(
 	}
 }
 
-/**
- * Get users for discovery based on shared interests
- */
 export async function getDiscoverUsers({
 	currentUserId,
 	excludeSwiped = false,
@@ -193,7 +177,6 @@ export async function getDiscoverUsers({
 			? currentUser.outgoingSwipes?.map(swipe => swipe.toId) || []
 			: [];
 
-		// Find users who share at least one programming language OR job title
 		const matchingUsers = await prisma.user.findMany({
 			where: {
 				AND: [
@@ -239,9 +222,6 @@ export async function getDiscoverUsers({
 	}
 }
 
-/**
- * Delete user account and all associated data
- */
 export async function deleteUser(
 	userId: string,
 ): Promise<ServiceResult<string>> {
@@ -256,9 +236,6 @@ export async function deleteUser(
 	}
 }
 
-/**
- * Get user by email
- */
 export async function getUserByEmail(
 	email: string,
 ): Promise<ServiceResult<User | null>> {
@@ -270,9 +247,6 @@ export async function getUserByEmail(
 	}
 }
 
-/**
- * Type for authenticated user with photo
- */
 export type AuthUser = User & {
 	photo: {
 		id: string;
@@ -282,9 +256,6 @@ export type AuthUser = User & {
 	} | null;
 };
 
-/**
- * Get authenticated user with photo
- */
 export async function getAuthUserById(
 	userId: string,
 ): Promise<ServiceResult<AuthUser>> {
@@ -311,16 +282,12 @@ export interface CreateUserParams {
 	passwordHash: string;
 }
 
-/**
- * Create a new user
- */
 export async function createUser(
 	params: CreateUserParams,
 ): Promise<ServiceResult<User>> {
 	try {
 		const { firstName, lastName, email, passwordHash } = params;
 
-		// Check if user already exists
 		const existingUser = await prisma.user.findUnique({ where: { email } });
 		if (existingUser) {
 			return error("VALIDATION", "Account is already in use");

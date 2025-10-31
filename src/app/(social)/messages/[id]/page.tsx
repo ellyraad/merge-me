@@ -111,7 +111,6 @@ export default function ConversationPage() {
 
 			const newMessage = await response.json();
 
-			// Update conversation with new message
 			setConversation(prev => {
 				if (!prev) {
 					return prev;

@@ -30,12 +30,12 @@ export default function RegisterForm() {
 
 	const router = useRouter();
 	const onSubmit: SubmitHandler<RegisterDataSchema> = async (
-		data: RegisterDataSchema
+		data: RegisterDataSchema,
 	) => {
 		const fetchResult = await registerUser(data);
 		const result = handleFormSubmitResult(
 			fetchResult,
-			"Account successfully created"
+			"Account successfully created",
 		);
 
 		if (result) {

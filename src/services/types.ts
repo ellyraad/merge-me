@@ -1,7 +1,3 @@
-/**
- * Service layer types and utilities
- */
-
 export interface PaginationParams {
 	limit?: number;
 	offset?: number;
@@ -24,16 +20,10 @@ export type ServiceResult<T> =
 	| { success: true; data: T }
 	| { success: false; error: ServiceError };
 
-/**
- * Helper to create a success result
- */
 export function success<T>(data: T): ServiceResult<T> {
 	return { success: true, data };
 }
 
-/**
- * Helper to create an error result
- */
 export function error<T>(
 	type: ServiceError["type"],
 	message: string,

@@ -92,7 +92,6 @@ export default function ProfilePage() {
 		try {
 			setIsLoading(true);
 
-			// Check if conversation already exists
 			const checkResponse = await fetch(
 				`/api/conversations?userId=${user.id}`,
 				{
@@ -106,13 +105,11 @@ export default function ProfilePage() {
 
 			const checkData = await checkResponse.json();
 
-			// If conversation exists and has messages, go directly to it
 			if (checkData.exists && checkData.hasMessages) {
 				router.push(`/messages/${checkData.conversation.id}`);
 				return;
 			}
 
-			// If conversation exists but no messages, or doesn't exist, show modal
 			setIsModalOpen(true);
 		} catch (error) {
 			console.error("Error starting chat:", error);
@@ -127,7 +124,6 @@ export default function ProfilePage() {
 		}
 
 		try {
-			// Create conversation with initial message
 			const response = await fetch("/api/conversations", {
 				method: "POST",
 				headers: {
@@ -208,7 +204,6 @@ export default function ProfilePage() {
 							</div>
 
 							<div className="mt-2 flex w-full justify-end gap-2">
-								{/* Show message button only for other users' profiles who are matches */}
 								{!isOwnProfile && user.match && (
 									<Tooltip content="Message">
 										<Button
@@ -223,7 +218,6 @@ export default function ProfilePage() {
 									</Tooltip>
 								)}
 
-								{/* Show edit button only for current user's profile */}
 								{isOwnProfile && (
 									<Tooltip content="Edit Profile">
 										<Button
@@ -241,7 +235,6 @@ export default function ProfilePage() {
 						</div>
 					</div>
 
-					{/* Bio Section */}
 					{user.bio && (
 						<div className="rounded-lg border-1 border-gray-800 bg-surface-2-d p-6">
 							<h2 className="font-semibold text-2xl">Bio</h2>

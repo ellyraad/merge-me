@@ -57,7 +57,6 @@ export default function SettingsPage() {
 		}
 	};
 
-	// Prevent hydration mismatch
 	if (!mounted) {
 		return (
 			<main className="container mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8">
@@ -84,7 +83,6 @@ export default function SettingsPage() {
 
 	return (
 		<main className="container mx-auto flex max-w-4xl flex-col gap-8 px-4 py-8">
-			{/* Theme Settings */}
 			<div className="flex items-center justify-between gap-4 border-b-1 border-b-gray-700 pb-3">
 				<h2 className="font-bold text-lg">Theme</h2>
 
@@ -138,7 +136,6 @@ export default function SettingsPage() {
 				</div>
 			</div>
 
-			{/* Sign Out Confirmation Modal */}
 			<Modal
 				isOpen={isSignOutModalOpen}
 				onClose={() => setIsSignOutModalOpen(false)}
@@ -171,7 +168,6 @@ export default function SettingsPage() {
 				</ModalContent>
 			</Modal>
 
-			{/* Delete Account Confirmation Modal */}
 			<Modal
 				isOpen={isDeleteModalOpen}
 				onClose={() => setIsDeleteModalOpen(false)}
