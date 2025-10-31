@@ -9,7 +9,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
-import { FaEllipsisVertical } from "react-icons/fa6";
 import type { ConversationDetail } from "@/lib/types";
 
 export default function ConversationPage() {

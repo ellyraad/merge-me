@@ -131,7 +131,7 @@ export default function SettingsPage() {
 				</div>
 			</div>
 
-			<Modal
+			<ConfirmationModal
 				isOpen={isSignOutModalOpen}
 				onClose={() => setIsSignOutModalOpen(false)}
 				onConfirm={handleSignOut}
@@ -142,7 +142,7 @@ export default function SettingsPage() {
 				isLoading={isSigningOut}
 			/>
 
-			<Modal
+			<ConfirmationModal
 				isOpen={isDeleteModalOpen}
 				onClose={() => setIsDeleteModalOpen(false)}
 				onConfirm={handleDeleteAccount}
