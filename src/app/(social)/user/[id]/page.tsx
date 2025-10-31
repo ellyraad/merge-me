@@ -3,16 +3,16 @@
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
-import { Spinner } from "@heroui/spinner";
 import { Tooltip } from "@heroui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaComment } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import { ErrorState } from "@/app/ui/components/error-state";
+import { LoadingState } from "@/app/ui/components/loading-state";
 import { MessageModal } from "@/app/ui/components/message-modal";
 import { InfoHeader } from "./components/profile-info";
-import { UserNotFoundFallback } from "./components/user-not-found";
 
 interface UserProfile {
 	id: string;
@@ -152,15 +152,18 @@ export default function ProfilePage() {
 	};
 
 	if (isUserLoading) {
-		return (
-			<div className="container mx-auto flex max-w-4xl items-center justify-center px-4 py-8">
-				<Spinner size="lg" />
-			</div>
-		);
+		return <LoadingState />;
 	}
 
 	if (error) {
-		return <UserNotFoundFallback />;
+		return (
+			<div className="container mx-auto max-w-4xl px-4 py-8">
+				<ErrorState
+					title="User not found"
+					description="The user you're looking for doesn't exist or has been removed."
+				/>
+			</div>
+		);
 	}
 
 	if (!user) {
