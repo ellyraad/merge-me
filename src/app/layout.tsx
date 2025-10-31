@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { geistMono, monaSans } from "@/fonts";
 import "./globals.css";
-import Footer from "./ui/components/footer";
 import { Providers } from "./ui/providers";
 
 export const metadata: Metadata = {
@@ -19,10 +18,7 @@ export default function RootLayout({
 			<body
 				className={`${monaSans.variable} ${geistMono.variable} bg-background-light antialiased dark:bg-background-dark`}
 			>
-				<Providers>
-					{children}
-					<Footer />
-				</Providers>
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
