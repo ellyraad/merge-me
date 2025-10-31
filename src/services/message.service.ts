@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { pusherServer } from "@/lib/pusher";
 import type { ServiceResult } from "./types";
 import { error, success } from "./types";
 
@@ -59,6 +60,16 @@ export async function createMessage({
 				data: { updatedAt: new Date() },
 			}),
 		]);
+
+		try {
+			await pusherServer.trigger(
+				`conversation-${conversationId}`,
+				"new-message",
+				message,
+			);
+		} catch (pusherError) {
+			console.error("Failed to trigger Pusher event:", pusherError);
+		}
 
 		return success(message);
 	} catch (err) {

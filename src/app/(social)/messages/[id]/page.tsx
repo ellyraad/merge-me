@@ -7,8 +7,9 @@ import { Textarea } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
+import { usePusher } from "@/lib/hooks/usePusher";
 import type { ConversationDetail } from "@/lib/types";
 
 export default function ConversationPage() {
@@ -23,6 +24,34 @@ export default function ConversationPage() {
 	const [message, setMessage] = useState("");
 	const [isSending, setIsSending] = useState(false);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+
+	const handleNewMessage = useCallback(
+		(data: ConversationDetail["messages"][0]) => {
+			setConversation(prev => {
+				if (!prev) {
+					return prev;
+				}
+
+				const messageExists = prev.messages.some(msg => msg.id === data.id);
+				if (messageExists) {
+					return prev;
+				}
+
+				return {
+					...prev,
+					messages: [...prev.messages, data],
+				};
+			});
+		},
+		[],
+	);
+
+	usePusher({
+		channelName: `conversation-${id}`,
+		eventName: "new-message",
+		onEvent: handleNewMessage,
+		enabled: !!id,
+	});
 
 	useEffect(() => {
 		async function fetchData() {
@@ -62,7 +91,6 @@ export default function ConversationPage() {
 		}
 	}, [id]);
 
-	// Scroll to bottom when messages change
 	useEffect(() => {
 		if (conversation?.messages) {
 			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -88,24 +116,15 @@ export default function ConversationPage() {
 			});
 
 			if (!response.ok) {
-				throw new Error("Failed to send message");
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(errorData.error || "Failed to send message");
 			}
 
-			const newMessage = await response.json();
-
-			setConversation(prev => {
-				if (!prev) {
-					return prev;
-				}
-				return {
-					...prev,
-					messages: [...prev.messages, newMessage],
-				};
-			});
-
+			await response.json();
 			setMessage("");
 		} catch (err) {
 			console.error("Error sending message:", err);
+			alert(err instanceof Error ? err.message : "Failed to send message");
 		} finally {
 			setIsSending(false);
 		}
