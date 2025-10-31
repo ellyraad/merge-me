@@ -3,7 +3,7 @@
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
-import { Input } from "@heroui/input";
+import { Textarea } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -218,7 +218,7 @@ export default function ConversationPage() {
 			<Divider />
 
 			<div className="flex flex-col gap-2 py-4">
-				<Input
+				<Textarea
 					variant="bordered"
 					placeholder="Type a message..."
 					value={message}
