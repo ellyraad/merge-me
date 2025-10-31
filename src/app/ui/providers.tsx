@@ -11,18 +11,25 @@ import { ColorModeContext } from "../contexts/colormode";
 
 function ThemeSync({ children }: { children: React.ReactNode }) {
 	const { resolvedTheme, setTheme } = useTheme();
-	const [colorMode, setColorMode] = useState<"light" | "dark">("light");
+	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		if (resolvedTheme === "dark" || resolvedTheme === "light") {
-			setColorMode(resolvedTheme);
-		}
-	}, [resolvedTheme]);
+		setMounted(true);
+	}, []);
+
+	const colorMode = (
+		resolvedTheme === "dark" || resolvedTheme === "light"
+			? resolvedTheme
+			: "light"
+	) as "light" | "dark";
 
 	const handleSetColorMode = (mode: "light" | "dark") => {
-		setColorMode(mode);
 		setTheme(mode);
 	};
+
+	if (!mounted) {
+		return null;
+	}
 
 	return (
 		<ColorModeContext.Provider
@@ -51,6 +58,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 				defaultTheme="system"
 				enableSystem
 				storageKey="merge-me-theme"
+				disableTransitionOnChange
 			>
 				<HeroUIProvider>
 					<ThemeSync>
