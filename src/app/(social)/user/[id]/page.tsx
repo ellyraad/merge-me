@@ -11,37 +11,11 @@ import { useState } from "react";
 import { FaComment } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import { MessageModal } from "@/app/ui/components/message-modal";
+import type { FullUserProfile } from "@/lib/types";
 import { InfoHeader } from "./components/profile-info";
 import { UserNotFoundFallback } from "./components/user-not-found";
 
-interface UserProfile {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email?: string;
-	city: string | null;
-	country: string | null;
-	bio: string | null;
-	createdAt: string;
-	doneOnboarding?: boolean;
-	photo: {
-		url: string;
-		publicId: string;
-	} | null;
-	programmingLanguages: Array<{
-		id: string;
-		name: string;
-	}>;
-	jobTitles: Array<{
-		id: string;
-		name: string;
-	}>;
-	match?: {
-		matchId: string;
-	} | null;
-}
-
-async function fetchUser(id: string): Promise<UserProfile> {
+async function fetchUser(id: string): Promise<FullUserProfile> {
 	const response = await fetch(`/api/users?id=${id}`);
 
 	if (!response.ok) {
@@ -51,7 +25,7 @@ async function fetchUser(id: string): Promise<UserProfile> {
 	return response.json();
 }
 
-async function fetchCurrentUser(): Promise<UserProfile> {
+async function fetchCurrentUser(): Promise<FullUserProfile> {
 	const response = await fetch("/api/users");
 
 	if (!response.ok) {

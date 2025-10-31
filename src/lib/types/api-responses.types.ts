@@ -1,4 +1,4 @@
-import type { JobTitle, ProgrammingLanguage } from "./shared.types";
+import type { JobTitle, ProgrammingLanguage } from "@prisma/client";
 
 export type JobTitlesResponse = {
 	jobTitles: JobTitle[];

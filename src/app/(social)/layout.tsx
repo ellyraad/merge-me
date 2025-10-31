@@ -15,7 +15,7 @@ export default async function ContentFeedLayout({
 
 	try {
 		id = (await getAuthUser())?.id;
-	} catch (error) {
+	} catch (_error) {
 		redirect("/login");
 	}
 

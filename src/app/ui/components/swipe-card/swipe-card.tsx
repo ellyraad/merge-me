@@ -9,9 +9,7 @@ import { DiGitMerge } from "react-icons/di";
 import { FaHeart } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { GoGitPullRequestClosed } from "react-icons/go";
-import type { DiscoverUser, SwipeResponse } from "@/lib/types";
-
-type SwipeDirection = "left" | "right";
+import type { DiscoverUser, SwipeDirection, SwipeResponse } from "@/lib/types";
 
 export interface SwipeCardProps {
 	onSwipe?: (direction: SwipeDirection, user: DiscoverUser) => void;

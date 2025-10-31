@@ -2,34 +2,13 @@
 
 import { Spinner } from "@heroui/spinner";
 import { useEffect, useState } from "react";
+import type { ConversationListItem as ConversationListItemType } from "@/lib/types";
 import { ConversationListItem } from "./components/conversation-list-item";
 
-interface ConversationUser {
-	id: string;
-	firstName: string;
-	lastName: string;
-	photo: {
-		url: string;
-	} | null;
-}
-
-interface LastMessage {
-	id: string;
-	content: string;
-	createdAt: string;
-	senderId: string;
-	isRead: boolean;
-}
-
-interface ConversationData {
-	id: string;
-	user: ConversationUser;
-	lastMessage: LastMessage | null;
-	unreadCount: number;
-}
-
 export default function MessagesPage() {
-	const [conversations, setConversations] = useState<ConversationData[]>([]);
+	const [conversations, setConversations] = useState<
+		ConversationListItemType[]
+	>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
