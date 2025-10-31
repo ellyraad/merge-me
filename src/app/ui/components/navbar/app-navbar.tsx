@@ -74,7 +74,7 @@ export default function AppNavbar({
 					<NavbarItem>
 						<Button
 							as={Link}
-							href="messages"
+							href="/messages"
 							variant="light"
 							isIconOnly
 							size="lg"
