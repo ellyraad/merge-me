@@ -16,7 +16,7 @@ export default function FooterSection() {
 	];
 
 	return (
-		<footer className="w-full bg-content1 py-12">
+		<footer className="w-full bg-surface-1-l/60 py-12 dark:bg-surface-1-d">
 			<div className="container mx-auto px-6">
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-4">
 					{/* Brand Section */}

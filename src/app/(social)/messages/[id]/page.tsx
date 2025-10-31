@@ -236,7 +236,7 @@ export default function ConversationPage() {
 						isDisabled={!message.trim() || isSending}
 						size="md"
 						radius="sm"
-						className="bg-gh-green-300 text-foreground"
+						className="bg-gh-green-300 text-white dark:text-foreground"
 					>
 						{!isSending && <FaPaperPlane />} Send
 					</Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@heroui/button";
-import { addToast, Skeleton } from "@heroui/react";
+import { addToast, Skeleton, Tooltip } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -137,7 +137,7 @@ function Card({
 				cursor: isTop ? "grab" : "default",
 			}}
 			whileTap={isTop ? { cursor: "grabbing" } : undefined}
-			className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg border-1 border-gray-700 hover:border-gh-blue-300"
+			className="absolute top-0 left-0 flex h-full w-full select-none flex-col overflow-hidden rounded-lg border-1 border-gray-300 shadow-md hover:border-gh-blue-300 dark:border-gray-700"
 		>
 			{/* Image */}
 			<div
@@ -146,14 +146,20 @@ function Card({
 			/>
 
 			{/* User Info */}
-			<div className="flex-none border-slate-800 border-t bg-surface-2-d p-4 text-white">
+			<div className="flex-none border-gray-400 bg-surface-0-l p-4 text-white dark:border-slate-800 dark:bg-surface-2-d">
 				<div className="flex flex-col gap-1">
-					<div className="font-bold text-xl">{fullName}</div>
-					<div className="text-slate-400 text-sm">{primaryJobTitle}</div>
+					<div className="font-bold text-background-dark text-xl dark:text-foreground">
+						{fullName}
+					</div>
+					<div className="text-sm text-surface-1-d dark:text-foreground-400">
+						{primaryJobTitle}
+					</div>
 					{location && <div className="text-slate-500 text-xs">{location}</div>}
 				</div>
 
-				<div className="mt-2 text-slate-300 text-sm">{user.bio}</div>
+				<div className="mt-2 text-sm text-surface-2-d dark:text-slate-300">
+					{user.bio}
+				</div>
 
 				{/* Programming Languages */}
 				{user.programmingLanguages.length > 0 && (
@@ -161,7 +167,7 @@ function Card({
 						{user.programmingLanguages.map(lang => (
 							<span
 								key={lang.id}
-								className="rounded-full bg-blue-600/20 px-3 py-1 text-blue-300 text-xs"
+								className="rounded-sm bg-surface-1-l px-3 py-1 text-blue-950 text-xs dark:bg-blue-600/20 dark:text-blue-300"
 							>
 								{lang.name}
 							</span>
@@ -172,23 +178,25 @@ function Card({
 				{/* Action Buttons */}
 				{isTop && (
 					<div className="mt-5 flex gap-2">
-						<Button
-							variant="bordered"
-							color="danger"
-							fullWidth
-							onPress={() => handleButtonSwipe("left")}
-							className="flex items-center rounded-sm"
-						>
-							<FaX size={15} />
-							<span className="font-bold text-lg">NGTM</span>
-						</Button>
+						<Tooltip content="Not Good To Me" closeDelay={0}>
+							<Button
+								variant="bordered"
+								color="danger"
+								fullWidth
+								onPress={() => handleButtonSwipe("left")}
+								className="flex items-center rounded-sm hover:bg-red-700 hover:text-white"
+							>
+								<FaX size={15} />
+								<span className="font-bold text-lg">NGTM</span>
+							</Button>
+						</Tooltip>
 
 						<Button
 							onPress={() => handleButtonSwipe("right")}
 							variant="solid"
 							color="success"
 							fullWidth
-							className="flex items-center rounded-sm bg-gh-green-300 text-foreground"
+							className="flex items-center rounded-sm bg-gh-green-300 text-white dark:text-foreground"
 						>
 							<span className="font-bold text-lg">LGTM</span>
 							<FaHeart size={15} />

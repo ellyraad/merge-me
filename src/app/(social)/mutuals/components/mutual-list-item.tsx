@@ -83,7 +83,10 @@ export function MutualListItem({
 
 	return (
 		<>
-			<Card className="rounded-md border-1 border-gray-700 bg-surface-1-d px-5 py-4 hover:bg-surface-2-d">
+			<Card
+				shadow="sm"
+				className="rounded-md border-1 border-gray-100 bg-surface-1-l/20 px-5 py-4 hover:border-gray-200 hover:bg-surface-1-l dark:border-gray-700 dark:bg-surface-1-d dark:hover:bg-surface-2-d"
+			>
 				<div className="flex items-start gap-6">
 					<div>
 						<Avatar
@@ -100,7 +103,7 @@ export function MutualListItem({
 						<div className="flex items-center gap-2">
 							<Link
 								href={`/user/${userId}`}
-								className="font-bold text-green-400 text-lg underline-offset-2 hover:text-gh-blue-300 hover:underline"
+								className="font-bold text-gh-green-300 text-lg underline-offset-2 hover:text-gh-blue-300 hover:underline dark:text-green-400"
 							>
 								{name}
 							</Link>
@@ -116,11 +119,16 @@ export function MutualListItem({
 							variant="flat"
 							color="success"
 							radius="sm"
-							className="my-auto bg-gh-green-300 p-2"
+							className="my-auto bg-gh-green-50/40 p-2 dark:bg-gh-green-300"
 							onPress={handleStartChat}
 							isLoading={isLoading}
 						>
-							{!isLoading && <FaComment className="text-white" size={26} />}
+							{!isLoading && (
+								<FaComment
+									className="text-gh-green-400 dark:text-white"
+									size={26}
+								/>
+							)}
 						</Button>
 					</Tooltip>
 				</div>

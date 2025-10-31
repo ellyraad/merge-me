@@ -24,7 +24,7 @@ export function ConversationListItem({
 	return (
 		<Card
 			isPressable
-			className="rounded-md border-2 border-gray-700 bg-surface-1-d px-5 py-4 hover:border-gh-blue-300"
+			className="rounded-md border-1 border-gray-100 bg-surface-1-l/20 px-5 py-4 hover:border-gh-blue-300/20 hover:border-gray-200 hover:bg-surface-1-l dark:border-gray-700 dark:bg-surface-1-d dark:hover:bg-surface-2-d"
 		>
 			<Link
 				className="flex items-start gap-6"

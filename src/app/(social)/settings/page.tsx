@@ -119,22 +119,23 @@ export default function SettingsPage() {
 					Advanced
 				</h2>
 
-				<div className="mt-2 flex gap-6">
+				<div className="mt-2 flex justify-between gap-6">
 					<p>
 						Permanently delete your account and all associated data. This action
 						cannot be undone.
 					</p>
 
-					<Button
-						color="danger"
-						variant="flat"
-						size="md"
-						radius="sm"
-						className="w-fit"
-						onPress={() => setIsDeleteModalOpen(true)}
-					>
-						Delete Account
-					</Button>
+					<div>
+						<Button
+							variant="faded"
+							size="md"
+							radius="sm"
+							className="bg-red-700 text-white"
+							onPress={() => setIsDeleteModalOpen(true)}
+						>
+							Delete account
+						</Button>
+					</div>
 				</div>
 			</div>
 
