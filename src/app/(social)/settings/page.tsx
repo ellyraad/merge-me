@@ -3,18 +3,12 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
-import {
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-} from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { deleteUserAccount, signOutUser } from "@/app/actions/auth-actions";
 import { useColorMode } from "@/app/contexts/colormode";
+import { ConfirmationModal } from "@/app/ui/components/confirmation-modal";
 
 export default function SettingsPage() {
 	const { setTheme, resolvedTheme } = useTheme();
@@ -140,73 +134,28 @@ export default function SettingsPage() {
 			</div>
 
 			{/* Sign Out Confirmation Modal */}
-			<Modal
+			<ConfirmationModal
 				isOpen={isSignOutModalOpen}
 				onClose={() => setIsSignOutModalOpen(false)}
-				placement="center"
-			>
-				<ModalContent>
-					<ModalHeader className="flex flex-col gap-1">
-						Confirm Sign Out
-					</ModalHeader>
-					<ModalBody>
-						<p>Are you sure you want to sign out?</p>
-					</ModalBody>
-					<ModalFooter>
-						<Button
-							color="default"
-							variant="light"
-							onPress={() => setIsSignOutModalOpen(false)}
-							isDisabled={isSigningOut}
-						>
-							Cancel
-						</Button>
-						<Button
-							color="primary"
-							onPress={handleSignOut}
-							isLoading={isSigningOut}
-						>
-							Sign Out
-						</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
+				onConfirm={handleSignOut}
+				title="Confirm Sign Out"
+				description="Are you sure you want to sign out?"
+				confirmText="Sign Out"
+				confirmColor="primary"
+				isLoading={isSigningOut}
+			/>
 
 			{/* Delete Account Confirmation Modal */}
-			<Modal
+			<ConfirmationModal
 				isOpen={isDeleteModalOpen}
 				onClose={() => setIsDeleteModalOpen(false)}
-				placement="center"
-			>
-				<ModalContent>
-					<ModalHeader className="flex flex-col gap-1">
-						Delete Account
-					</ModalHeader>
-					<ModalBody>
-						<p>
-							Are you sure you want to delete your account? This action cannot
-							be undone and all your data will be permanently removed.
-						</p>
-					</ModalBody>
-					<ModalFooter>
-						<Button
-							color="default"
-							variant="light"
-							onPress={() => setIsDeleteModalOpen(false)}
-							isDisabled={isDeleting}
-						>
-							Cancel
-						</Button>
-						<Button
-							color="danger"
-							onPress={handleDeleteAccount}
-							isLoading={isDeleting}
-						>
-							Delete Account
-						</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
+				onConfirm={handleDeleteAccount}
+				title="Delete Account"
+				description="Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
+				confirmText="Delete Account"
+				confirmColor="danger"
+				isLoading={isDeleting}
+			/>
 		</main>
 	);
 }
