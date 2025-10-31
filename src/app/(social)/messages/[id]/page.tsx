@@ -144,7 +144,7 @@ export default function ConversationPage() {
 	const fullName = `${otherUser.firstName} ${otherUser.lastName}`;
 
 	return (
-		<main className="flex h-full max-w-4xl flex-col px-4 py-8">
+		<main className="flex h-full max-w-4xl flex-col px-4 py-2 sm:py-8">
 			<div className="flex shrink-0 items-center justify-between gap-3 border-gray-700 border-b-1 pb-5">
 				<div className="flex items-center gap-4">
 					<Avatar src={otherUser.photo?.url} size="md" />

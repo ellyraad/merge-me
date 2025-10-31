@@ -3,6 +3,7 @@ import { FaHeartbeat } from "react-icons/fa";
 import { FaGear, FaMagnifyingGlass } from "react-icons/fa6";
 import { FiMessageCircle } from "react-icons/fi";
 import { getAuthUser } from "../actions/auth-actions";
+import { AppFooter } from "../ui/components/navbar/app-footer";
 import AppNavbar from "../ui/components/navbar/app-navbar";
 import AppSideNav from "../ui/components/navbar/app-sidenav";
 
@@ -38,22 +39,24 @@ export default async function ContentFeedLayout({
 	];
 
 	return (
-		<div className="mb-20">
+		<div className="flex min-h-screen flex-col">
 			<AppNavbar
 				currUserId={id}
 				className="block md:hidden"
 				topMenuItems={topMenu}
 				bottomMenuItems={bottomMenuItems}
 			/>
-			<div className="mx-auto my-5 h-[calc(100vh-100px)] w-11/12 gap-7 md:flex lg:w-8/12">
+			<div className="mx-auto my-5 w-11/12 flex-1 gap-7 pb-10 md:flex lg:w-8/12">
 				<AppSideNav
 					currUserId={id}
 					className="hidden md:block"
 					topMenuItems={topMenu}
 					bottomMenuItems={bottomMenuItems}
 				/>
-				<div className="flex h-full w-full flex-col">{children}</div>
+				<div className="flex w-full flex-col">{children}</div>
 			</div>
+
+			<AppFooter />
 		</div>
 	);
 }
