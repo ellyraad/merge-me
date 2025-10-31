@@ -35,15 +35,7 @@ function ThemeSync({ children }: { children: React.ReactNode }) {
 		<ColorModeContext.Provider
 			value={{ colorMode, setColorMode: handleSetColorMode }}
 		>
-			<ThemeProvider
-				colorMode={colorMode}
-				style={{
-					backgroundColor: "var(--brand-color-canvas-default)",
-					transition: "background-color 0.3s ease",
-				}}
-			>
-				{children}
-			</ThemeProvider>
+			<ThemeProvider colorMode={colorMode}>{children}</ThemeProvider>
 		</ColorModeContext.Provider>
 	);
 }
