@@ -145,6 +145,7 @@ export default function SettingsPage() {
 				title="Confirm Sign Out"
 				description="Are you sure you want to sign out?"
 				confirmLabel="Sign Out"
+				confirmClassName="rounded-sm bg-red-700 text-white"
 				confirmColor="primary"
 				isLoading={isSigningOut}
 			/>
@@ -154,6 +155,7 @@ export default function SettingsPage() {
 				onClose={() => setIsDeleteModalOpen(false)}
 				onConfirm={handleDeleteAccount}
 				title="Delete Account"
+				confirmClassName="bg-red-700 text-white rounded-sm"
 				description="Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
 				confirmLabel="Delete Account"
 				confirmColor="danger"

@@ -13,6 +13,7 @@ interface ConfirmationModalProps {
 	title: string;
 	description: string;
 	confirmLabel?: string;
+	confirmClassName?: string;
 	cancelLabel?: string;
 	confirmColor?:
 		| "default"
@@ -33,12 +34,13 @@ export function ConfirmationModal({
 	confirmLabel = "Confirm",
 	cancelLabel = "Cancel",
 	confirmColor = "primary",
+	confirmClassName,
 	onConfirm,
 	isLoading = false,
 }: ConfirmationModalProps) {
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} placement="center">
-			<ModalContent>
+			<ModalContent className="rounded-sm">
 				<ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
 				<ModalBody>
 					<p>{description}</p>
@@ -49,6 +51,7 @@ export function ConfirmationModal({
 						variant="light"
 						onPress={onClose}
 						isDisabled={isLoading}
+						className="rounded-sm"
 					>
 						{cancelLabel}
 					</Button>
@@ -56,6 +59,7 @@ export function ConfirmationModal({
 						color={confirmColor}
 						onPress={onConfirm}
 						isLoading={isLoading}
+						className={confirmClassName}
 					>
 						{confirmLabel}
 					</Button>
