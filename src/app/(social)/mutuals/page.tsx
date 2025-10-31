@@ -27,7 +27,7 @@ export default function MutualsPage() {
 	});
 
 	return (
-		<main className="container mx-auto max-w-3xl py-8">
+		<main className="container mx-auto max-w-3xl py-2 sm:py-8">
 			<h1 className="font-bold text-2xl">
 				People who approved your{" "}
 				<Tooltip content="Pull Request" closeDelay={0}>
