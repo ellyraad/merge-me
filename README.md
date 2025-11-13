@@ -1,3 +1,6 @@
+> *Output for Builder Round of [Launchpad Program](https://www.facebook.com/share/p/1DEZtFVRZ5/) @ [White Cloak Technologies](https://www.whitecloak.com/)*
+
+
 # MergeMe
 A developer-focused dating platform where programmers can connect based on their
 tech stack and job role, and shared interests. Submit your pull request!
